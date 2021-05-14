@@ -22,11 +22,8 @@ namespace HelloWorld {
 		public void Move() {
 			if (NetworkManager.Singleton.IsServer) {
 				var randomPosition = GetRandomPositionOnPlane();
-				transform.position+=randomPosition;
 				Position.Value+=randomPosition;
-				Debug.Log("adios");
 			} else {
-				Debug.Log("hola");
 				SubmitPositionRequestServerRpc(dir);
 			}
 		}
