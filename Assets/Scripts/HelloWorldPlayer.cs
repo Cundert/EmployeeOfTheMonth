@@ -10,7 +10,11 @@ namespace HelloWorld {
 		public Vector2 dir, adir;
 		public int nattacks;
 		public float speed;
-
+		
+		public float attackDelay = 0.2f;
+		public float lastAttack = 0.0f;
+		public float Timer = 0.0f;
+		
 		public NetworkVariableVector3 Position = new NetworkVariableVector3(new NetworkVariableSettings {
 			WritePermission=NetworkVariablePermission.ServerOnly,
 			ReadPermission=NetworkVariablePermission.Everyone
@@ -38,6 +42,9 @@ namespace HelloWorld {
 		
 		public void Attack(){
 			if(!IsLocalPlayer) return;
+			if(adir.x == 0 && adir.y == 0) return;
+			if(lastAttack + attackDelay > Timer) return;
+			lastAttack = Timer;
 			UpdateAttackServerRpc(adir);
 		}
 
@@ -55,6 +62,7 @@ namespace HelloWorld {
 		void generateAttack(){
 			// Generates an attack in direction AttackDir
 			// todo
+			
 		}
 
 		void Update() {
@@ -63,6 +71,7 @@ namespace HelloWorld {
 				generateAttack();
 			}
 			if (IsLocalPlayer) {
+				Timer += Time.deltaTime;
 				float val = speed*Time.deltaTime;
 				dir = new Vector2(0, 0);
 				if (Input.GetKey("s")) dir+=new Vector2( 0, -1);
