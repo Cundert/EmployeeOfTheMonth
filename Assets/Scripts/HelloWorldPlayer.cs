@@ -6,6 +6,10 @@ using UnityEngine;
 
 namespace HelloWorld {
 	public class HelloWorldPlayer : NetworkBehaviour {
+
+		public Vector2 dir;
+		public float speed;
+
 		public NetworkVariableVector3 Position = new NetworkVariableVector3(new NetworkVariableSettings {
 			WritePermission=NetworkVariablePermission.ServerOnly,
 			ReadPermission=NetworkVariablePermission.Everyone
@@ -18,8 +22,8 @@ namespace HelloWorld {
 		public void Move() {
 			if (NetworkManager.Singleton.IsServer) {
 				var randomPosition = GetRandomPositionOnPlane();
-				transform.position=randomPosition;
-				Position.Value=randomPosition;
+				transform.position+=randomPosition;
+				Position.Value+=randomPosition;
 			} else {
 				SubmitPositionRequestServerRpc();
 			}
@@ -27,14 +31,21 @@ namespace HelloWorld {
 
 		[ServerRpc]
 		void SubmitPositionRequestServerRpc(ServerRpcParams rpcParams = default) {
-			Position.Value=GetRandomPositionOnPlane();
+			Position.Value+=GetRandomPositionOnPlane();
 		}
 
-		static Vector3 GetRandomPositionOnPlane() {
-			return new Vector3(Random.Range(-3f, 3f), 1f, Random.Range(-3f, 3f));
+		Vector3 GetRandomPositionOnPlane() {
+			return new Vector3(dir.x, dir.y, 0);
 		}
 
 		void Update() {
+			float val = speed*Time.deltaTime;
+			if (Input.GetKey("s")) dir=new Vector2(0, -val);
+			else if (Input.GetKey("w")) dir=new Vector2(0, val);
+			else if (Input.GetKey("a")) dir=new Vector2(-val, 0);
+			else if (Input.GetKey("d")) dir=new Vector2(val, 0);
+			else dir=new Vector2(0, 0);
+			Move();
 			transform.position=Position.Value;
 		}
 	}
