@@ -22,7 +22,7 @@ namespace HelloWorld {
 		public void Move() {
 			if (!IsLocalPlayer) return;
 			transform.position+=new Vector3(dir.x, dir.y, 0);
-			SubmitPositionRequestServerRpc(transform.position);
+			SubmitPositionRequestServerRpc(new Vector2(transform.position.x,transform.position.y));
 		}
 
 		[ServerRpc]
