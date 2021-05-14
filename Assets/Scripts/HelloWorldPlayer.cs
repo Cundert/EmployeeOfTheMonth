@@ -9,8 +9,9 @@ namespace HelloWorld {
 
 		public Vector2 dir;
 		public float speed;
+        public CameraController playerCamera;
 
-		public NetworkVariableVector3 Position = new NetworkVariableVector3(new NetworkVariableSettings {
+        public NetworkVariableVector3 Position = new NetworkVariableVector3(new NetworkVariableSettings {
 			WritePermission=NetworkVariablePermission.ServerOnly,
 			ReadPermission=NetworkVariablePermission.Everyone
 		});
@@ -34,6 +35,11 @@ namespace HelloWorld {
 			return new Vector3(dir.x, dir.y, 0);
 		}
 
+        void Start()
+        {
+            playerCamera = CameraController.instance;
+        }
+
 		void Update() {
 			float val = speed*Time.deltaTime;
             dir = new Vector2(0, 0);
@@ -44,7 +50,14 @@ namespace HelloWorld {
             dir.Normalize();
             dir = dir * val;
 			Move();
-			if (!IsLocalPlayer) transform.position=Position.Value;
+            Vector3 serverPosition = Position.Value;
+            if (!IsLocalPlayer) transform.position = serverPosition;
+            else
+            {
+                Vector3 possibleFuturePosition = new Vector3(serverPosition.x, serverPosition.y, -10);
+                if (Vector3.Distance(playerCamera.transform.position, possibleFuturePosition) > 0.05)
+                    playerCamera.transform.position = possibleFuturePosition;
+            }
 		}
 	}
 }
