@@ -49,7 +49,6 @@ namespace HelloWorld {
 				if (childname!=PlayerName.Value) {
 					transform.GetChild(0).gameObject.GetComponent<TextMesh>().text=PlayerName.Value;
 				}
-				namesDisplayed.Value=true;
 			}
 		}
 
@@ -79,6 +78,7 @@ namespace HelloWorld {
             dir = dir * val;
 			Move();
 			if (!IsLocalPlayer) transform.position=Position.Value;
+			namesDisplayed.Value=true;
 		}
 	}
 }
