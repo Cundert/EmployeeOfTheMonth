@@ -21,12 +21,13 @@ namespace HelloWorld {
 
 		public void Move() {
 			if (!IsLocalPlayer) return;
-			SubmitPositionRequestServerRpc(dir);
+			transform.position+=new Vector3(dir.x, dir.y, 0);
+			SubmitPositionRequestServerRpc(new Vector2(transform.position.x,transform.position.y));
 		}
 
 		[ServerRpc]
 		void SubmitPositionRequestServerRpc(Vector2 d, ServerRpcParams rpcParams = default) {
-			Position.Value+=new Vector3(d.x, d.y, 0);
+			Position.Value=new Vector3(d.x, d.y, 0);
 		}
 
 		Vector3 GetRandomPositionOnPlane() {
@@ -43,7 +44,7 @@ namespace HelloWorld {
             dir.Normalize();
             dir = dir * val;
 			Move();
-			transform.position=Position.Value;
+			if (!IsLocalPlayer) transform.position=Position.Value;
 		}
 	}
 }
