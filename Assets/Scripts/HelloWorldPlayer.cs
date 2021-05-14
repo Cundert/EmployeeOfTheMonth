@@ -20,6 +20,7 @@ namespace HelloWorld {
 		}
 
 		public void Move() {
+<<<<<<< HEAD
 			if( !isLocalPlayer ) return;
 			/*if (NetworkManager.Singleton.IsServer) {
 				var randomPosition = GetRandomPositionOnPlane();
@@ -27,6 +28,10 @@ namespace HelloWorld {
 			} else {*/
 				SubmitPositionRequestServerRpc(dir);
 			//}
+=======
+			if (!IsLocalPlayer) return;
+			SubmitPositionRequestServerRpc(dir);
+>>>>>>> 4d6f49433540fcdcf1eb2541919d34288e87f004
 		}
 
 		[ServerRpc]
