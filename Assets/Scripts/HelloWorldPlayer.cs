@@ -25,13 +25,13 @@ namespace HelloWorld {
 				transform.position+=randomPosition;
 				Position.Value+=randomPosition;
 			} else {
-				SubmitPositionRequestServerRpc();
+				SubmitPositionRequestServerRpc(dir);
 			}
 		}
 
 		[ServerRpc]
-		void SubmitPositionRequestServerRpc(ServerRpcParams rpcParams = default) {
-			Position.Value+=GetRandomPositionOnPlane();
+		void SubmitPositionRequestServerRpc(Vector2 d, ServerRpcParams rpcParams = default) {
+			Position.Value+=new Vector3(d.x, d.y, 0);
 		}
 
 		Vector3 GetRandomPositionOnPlane() {
@@ -45,7 +45,7 @@ namespace HelloWorld {
 			else if (Input.GetKey("a")) dir=new Vector2(-val, 0);
 			else if (Input.GetKey("d")) dir=new Vector2(val, 0);
 			else dir=new Vector2(0, 0);
-			//Move();
+			Move();
 			transform.position=Position.Value;
 		}
 	}
