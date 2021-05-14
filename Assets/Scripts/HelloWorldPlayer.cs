@@ -44,6 +44,7 @@ namespace HelloWorld {
             dir.Normalize();
             dir = dir * val;
 			Move();
+			if (!IsLocalPlayer) transform.position=Position.Value;
 		}
 	}
 }
