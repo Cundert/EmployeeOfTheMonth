@@ -20,12 +20,8 @@ namespace HelloWorld {
 		}
 
 		public void Move() {
-			if (NetworkManager.Singleton.IsServer) {
-				var randomPosition = GetRandomPositionOnPlane();
-				//Position.Value+=randomPosition;
-			} else {
-				SubmitPositionRequestServerRpc(dir);
-			}
+			if (!IsLocalPlayer) return;
+			SubmitPositionRequestServerRpc(dir);
 		}
 
 		[ServerRpc]
