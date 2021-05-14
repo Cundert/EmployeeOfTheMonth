@@ -15,6 +15,8 @@ namespace HelloWorld {
 		public float lastAttack = 0.0f;
 		public float Timer = 0.0f;
 		
+		public GameObject AttackObject;
+		
 		public NetworkVariableVector3 Position = new NetworkVariableVector3(new NetworkVariableSettings {
 			WritePermission=NetworkVariablePermission.ServerOnly,
 			ReadPermission=NetworkVariablePermission.Everyone
@@ -62,6 +64,7 @@ namespace HelloWorld {
 		void generateAttack(){
 			// Generates an attack in direction AttackDir
 			// todo
+			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
 			
 		}
 
