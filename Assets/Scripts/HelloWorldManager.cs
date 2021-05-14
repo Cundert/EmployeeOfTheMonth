@@ -47,14 +47,15 @@ namespace HelloWorld {
 		}
 
 		static void SubmitNewPosition() {
-			if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Move" : "Request Position Change")) {
-				if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId,
+			if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Start" : "Waiting for server")) {
+				/*if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId,
 					out var networkedClient)) {
 					var player = networkedClient.PlayerObject.GetComponent<HelloWorldPlayer>();
 					if (player) {
 						player.Move();
 					}
-				}
+				}*/
+				if (NetworkManager.Singleton.IsServer) Debug.Log("Me desaparesco");
 			}
 		}
 	}
