@@ -10,7 +10,7 @@ namespace HelloWorld {
 		public Vector2 dir, adir;
 		public int nattacks;
 		public float speed;
-    public CameraController playerCamera;
+        public CameraController playerCamera;
 		
 		public float attackDelay = 0.2f;
 		public float lastAttack = 0.0f;
@@ -43,7 +43,8 @@ namespace HelloWorld {
 			UpdatePositionServerRpc(transform.position);
 		}
 		
-		public void Attack(){
+		public void Attack()
+        {
 			if(!IsLocalPlayer) return;
 			if(adir.x == 0 && adir.y == 0) return;
 			if(lastAttack + attackDelay > Timer) return;
@@ -69,6 +70,35 @@ namespace HelloWorld {
 			
 		}
 
+        Vector2 getMovementVector(float val)
+        {
+            Vector2 dir = new Vector2(0, 0);
+            if (Input.GetKey("s")) dir += new Vector2(0, -1);
+            if (Input.GetKey("w")) dir += new Vector2(0, 1);
+            if (Input.GetKey("a")) dir += new Vector2(-1, 0);
+            if (Input.GetKey("d")) dir += new Vector2(1, 0);
+            dir.Normalize();
+            return dir * val;
+        }
+
+        Vector2 getAttackVector()
+        {
+            adir = new Vector2(0, 0);
+            if (Input.GetKey("down")) adir += new Vector2(0, -1);
+            if (Input.GetKey("up")) adir += new Vector2(0, 1);
+            if (Input.GetKey("left")) adir += new Vector2(-1, 0);
+            if (Input.GetKey("right")) adir += new Vector2(1, 0);
+            return adir;
+        }
+
+        void MoveCamera()
+        {
+            Vector3 serverPosition = Position.Value;
+            Vector3 possibleFuturePosition = new Vector3(serverPosition.x, serverPosition.y, -10);
+            if (Vector3.Distance(playerCamera.transform.position, possibleFuturePosition) > 0.05)
+                playerCamera.transform.position = possibleFuturePosition;
+        }
+
         void Start()
         {
             playerCamera = CameraController.instance;
@@ -81,28 +111,15 @@ namespace HelloWorld {
 			}
 			if (IsLocalPlayer) {
 				Timer += Time.deltaTime;
-				float val = speed*Time.deltaTime;
-				dir = new Vector2(0, 0);
-				if (Input.GetKey("s")) dir+=new Vector2( 0, -1);
-				if (Input.GetKey("w")) dir+=new Vector2( 0,  1);
-				if (Input.GetKey("a")) dir+=new Vector2(-1,  0);
-				if (Input.GetKey("d")) dir+=new Vector2( 1,  0);
-				dir.Normalize();
-				dir = dir * val;
-				
-				adir = new Vector2(0, 0);
-				if (Input.GetKey("down"))  adir+=new Vector2( 0, -1);
-				if (Input.GetKey("up"))    adir+=new Vector2( 0,  1);
-				if (Input.GetKey("left"))  adir+=new Vector2(-1,  0);
-				if (Input.GetKey("right")) adir+=new Vector2( 1,  0);
-				
-				Move();
+
+                dir = getMovementVector(speed * Time.deltaTime);
+                adir = getAttackVector();
+
+                Move();
 				Attack();
-        
-        Vector3 serverPosition = Position.Value;
-        Vector3 possibleFuturePosition = new Vector3(serverPosition.x, serverPosition.y, -10);
-        if (Vector3.Distance(playerCamera.transform.position, possibleFuturePosition) > 0.05)
-            playerCamera.transform.position = possibleFuturePosition;
+
+                MoveCamera();
+
 			} else {
 				transform.position=Position.Value;
 			}
