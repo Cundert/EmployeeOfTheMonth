@@ -35,11 +35,13 @@ namespace HelloWorld {
 
 		void Update() {
 			float val = speed*Time.deltaTime;
-			if (Input.GetKey("s")) dir=new Vector2(0, -val);
-			else if (Input.GetKey("w")) dir=new Vector2(0, val);
-			else if (Input.GetKey("a")) dir=new Vector2(-val, 0);
-			else if (Input.GetKey("d")) dir=new Vector2(val, 0);
-			else dir=new Vector2(0, 0);
+            dir = new Vector2(0, 0);
+            if (Input.GetKey("s")) dir+=new Vector2(0, -1);
+			if (Input.GetKey("w")) dir+=new Vector2(0, 1);
+			if (Input.GetKey("a")) dir+=new Vector2(-1, 0);
+			if (Input.GetKey("d")) dir+=new Vector2(1, 0);
+            dir.Normalize();
+            dir = dir * val;
 			Move();
 			transform.position=Position.Value;
 		}
