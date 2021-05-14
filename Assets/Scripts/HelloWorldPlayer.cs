@@ -37,13 +37,14 @@ namespace HelloWorld {
 			Move();
 		}
 
-		public void Move() {
+		public void Move(Vector2 dir) {
 			if (!IsLocalPlayer) return;
 			transform.position+=new Vector3(dir.x, dir.y, 0);
 			UpdatePositionServerRpc(transform.position);
 		}
 		
-		public void Attack(){
+		public void Attack(Vector2 adir)
+        {
 			if(!IsLocalPlayer) return;
 			if(adir.x == 0 && adir.y == 0) return;
 			if(lastAttack + attackDelay > Timer) return;
@@ -114,8 +115,8 @@ namespace HelloWorld {
                 Vector2 dir = getMovementVector(speed * Time.deltaTime);
                 Vector2 adir = getAttackVector();
 
-                Move();
-				Attack();
+                Move(dir);
+				Attack(adir);
 
                 MoveCamera();
 
