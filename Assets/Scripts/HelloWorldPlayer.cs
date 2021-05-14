@@ -45,7 +45,7 @@ namespace HelloWorld {
 			else if (Input.GetKey("a")) dir=new Vector2(-val, 0);
 			else if (Input.GetKey("d")) dir=new Vector2(val, 0);
 			else dir=new Vector2(0, 0);
-			Move();
+			//Move();
 			transform.position=Position.Value;
 		}
 	}
