@@ -10,7 +10,7 @@ namespace HelloWorld {
 		public Vector2 dir, adir;
 		public int nattacks;
 		public float speed;
-    public CameraController playerCamera;
+        public CameraController playerCamera;
 		
 		public float attackDelay = 0.2f;
 		public float lastAttack = 0.0f;
@@ -37,13 +37,13 @@ namespace HelloWorld {
 			Move();
 		}
 
-		public void Move(Vector2 dir) {
+		public void Move() {
 			if (!IsLocalPlayer) return;
 			transform.position+=new Vector3(dir.x, dir.y, 0);
 			UpdatePositionServerRpc(transform.position);
 		}
 		
-		public void Attack(Vector2 adir)
+		public void Attack()
         {
 			if(!IsLocalPlayer) return;
 			if(adir.x == 0 && adir.y == 0) return;
@@ -112,11 +112,11 @@ namespace HelloWorld {
 			if (IsLocalPlayer) {
 				Timer += Time.deltaTime;
 
-                Vector2 dir = getMovementVector(speed * Time.deltaTime);
-                Vector2 adir = getAttackVector();
+                dir = getMovementVector(speed * Time.deltaTime);
+                adir = getAttackVector();
 
-                Move(dir);
-				Attack(adir);
+                Move();
+				Attack();
 
                 MoveCamera();
 
