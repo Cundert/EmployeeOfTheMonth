@@ -10,7 +10,10 @@ namespace HelloWorld {
 		public Vector2 dir;
 		public float speed;
 
-		public NetworkVariableBool namesDisplayed;
+		public NetworkVariableBool namesDisplayed = new NetworkVariableBool(new NetworkVariableSettings {
+			WritePermission=NetworkVariablePermission.Everyone,
+			ReadPermission=NetworkVariablePermission.Everyone
+		});
 
 		public NetworkVariableString PlayerName = new NetworkVariableString(new NetworkVariableSettings {
 			WritePermission=NetworkVariablePermission.ServerOnly,
