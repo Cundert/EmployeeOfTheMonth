@@ -10,6 +10,7 @@ namespace HelloWorld {
 		public Vector2 dir, adir;
 		public int nattacks;
 		public float speed;
+    public CameraController playerCamera;
 		
 		public float attackDelay = 0.2f;
 		public float lastAttack = 0.0f;
@@ -68,6 +69,11 @@ namespace HelloWorld {
 			
 		}
 
+        void Start()
+        {
+            playerCamera = CameraController.instance;
+        }
+
 		void Update() {
 			while(nattacks < NAttacks.Value){
 				++nattacks;
@@ -92,6 +98,11 @@ namespace HelloWorld {
 				
 				Move();
 				Attack();
+        
+        Vector3 serverPosition = Position.Value;
+        Vector3 possibleFuturePosition = new Vector3(serverPosition.x, serverPosition.y, -10);
+        if (Vector3.Distance(playerCamera.transform.position, possibleFuturePosition) > 0.05)
+            playerCamera.transform.position = possibleFuturePosition;
 			} else {
 				transform.position=Position.Value;
 			}
