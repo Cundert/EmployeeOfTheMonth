@@ -189,10 +189,9 @@ namespace HelloWorld {
 
 		void MoveCamera()
 		{
-			Vector3 serverPosition = cameraFocus.GetComponent<HelloWorldPlayer>().Position.Value;
+			Vector3 serverPosition = cameraFocus.GetComponent<HelloWorldPlayer>().transform.position;
 			Vector3 possibleFuturePosition = new Vector3(serverPosition.x, serverPosition.y, -10);
-			if (Vector3.Distance(playerCamera.transform.position, possibleFuturePosition) > 0.04)
-				playerCamera.transform.position = possibleFuturePosition;
+			playerCamera.transform.position = possibleFuturePosition;
 		}
 
 		void ChangeCameraFocus(GameObject focus)
