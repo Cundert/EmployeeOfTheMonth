@@ -24,4 +24,10 @@ public class BulletScript : MonoBehaviour
 		
 		transform.position += (transform.rotation * new Vector3(1, 0, 0)) * Time.deltaTime * BulletSpeed;
     }
+
+	void OnTriggerEnter2D(Collider2D other)
+	{
+		if (other.gameObject.layer == 9)
+			Destroy(gameObject);
+	}
 }
