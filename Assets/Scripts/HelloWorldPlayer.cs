@@ -41,7 +41,8 @@ namespace HelloWorld {
 
         public override void NetworkStart() {
 			Move();
-		}
+            InitializeHPServerRpc(20);
+        }
 
 		public void Move() {
 			if (!IsLocalPlayer) return;
@@ -68,7 +69,19 @@ namespace HelloWorld {
 			AttackDir.Value=a;
 			NAttacks.Value++;
 		}
-		
+
+        [ServerRpc]
+        void InitializeHPServerRpc(int InitialHP, ServerRpcParams rpcParams = default)
+        {
+            HP.Value = InitialHP;
+        }
+
+        [ServerRpc]
+        void UpdateHPServerRpc(int HPDiff, ServerRpcParams rpcParams = default)
+        {
+            HP.Value += HPDiff;
+        }
+
 		void generateAttack(){
 			// Generates an attack in direction AttackDir
 			// todo
@@ -138,7 +151,7 @@ namespace HelloWorld {
             // If the Player has collided with a bullet that isn't theirs, and the Player is the local one
             // Then reduce the Player's health
             if (other.gameObject.tag == "Bullet" && other.gameObject.transform.parent != transform && IsLocalPlayer) {
-                // TODO: Reduce the Player's health
+                UpdateHPServerRpc(-1);
             }
             //if (collision.gameObject.tag == "Bullet" /*&& collision.gameObject.transform.parent != transform*/)
             //GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 1f);
