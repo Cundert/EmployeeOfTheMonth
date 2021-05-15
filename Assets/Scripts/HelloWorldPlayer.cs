@@ -160,7 +160,7 @@ namespace HelloWorld
 					GetComponent<CircleCollider2D>().radius,
 					new Vector3(dir.x, 0, 0),
 					val,
-					LayerMask.GetMask("TestObstacle")
+					LayerMask.GetMask("Wall")
 				).collider != null)
 				dir.x = 0;
 			if (Physics2D.CircleCast(
@@ -168,7 +168,7 @@ namespace HelloWorld
 					GetComponent<CircleCollider2D>().radius,
 					new Vector3(0, dir.y, 0),
 					val,
-					LayerMask.GetMask("TestObstacle")
+					LayerMask.GetMask("Wall")
 				).collider != null)
 				dir.y = 0;
 
