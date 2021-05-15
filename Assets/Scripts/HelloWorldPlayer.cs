@@ -38,10 +38,10 @@ namespace HelloWorld {
 			ReadPermission=NetworkVariablePermission.Everyone
 		});
 
-        public NetworkVariableInt HP = new NetworkVariableInt(new NetworkVariableSettings {
-            WritePermission = NetworkVariablePermission.ServerOnly,
-            ReadPermission = NetworkVariablePermission.Everyone
-        });
+		public NetworkVariableInt HP = new NetworkVariableInt(new NetworkVariableSettings {
+			WritePermission = NetworkVariablePermission.ServerOnly,
+			ReadPermission = NetworkVariablePermission.Everyone
+		});
 
         public NetworkVariableBool HPHasBeenSet = new NetworkVariableBool(new NetworkVariableSettings
         {
@@ -60,8 +60,8 @@ namespace HelloWorld {
 
 		public override void NetworkStart() {
 			Move();
-            InitializeHPServerRpc(20);
-        }
+			InitializeHPServerRpc(20);
+		}
 
 		public void Move() {
 			if (!IsLocalPlayer) return;
@@ -114,12 +114,12 @@ namespace HelloWorld {
             HP.Value += HPDiff;
         }
 		
-		void generateAttack(){
-			// Generates an attack in direction AttackDir
-			// todo
-			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
-			bullet.transform.parent = transform;
-		}
+	void generateAttack(){
+		// Generates an attack in direction AttackDir
+		// todo
+		GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
+		bullet.GetComponent<BulletScript>().source = gameObject;
+	}
 
         Vector2 getMovementVector(float val)
         {
@@ -167,26 +167,27 @@ namespace HelloWorld {
 			if (IsLocalPlayer) {
 				Timer += Time.deltaTime;
 
-                dir = getMovementVector(speed * Time.deltaTime);
-                adir = getAttackVector();
+				dir = getMovementVector(speed * Time.deltaTime);
+				adir = getAttackVector();
 
-                Move();
+				Move();
 				Attack();
 
-                MoveCamera();
+				MoveCamera();
 
             } else {
 				transform.position=Position.Value;
 			}
 		}
 
-        void OnTriggerEnter2D(Collider2D other)
-        {
-            // If the Player has collided with a bullet that isn't theirs, and the Player is the local one
-            // Then reduce the Player's health
-            if (other.gameObject.tag == "Bullet" && other.gameObject.transform.parent != transform && IsLocalPlayer) {
-                UpdateHPServerRpc(-1);
-            }
-        }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+      // If the Player has collided with a bullet that isn't theirs, and the Player is the local one
+      // Then reduce the Player's health
+      if (other.gameObject.tag == "Bullet" && other.GetComponent<BulletScript>().source != gameObject && IsLocalPlayer) {
+        UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage);
+      }
+    }
+
 	}
 }

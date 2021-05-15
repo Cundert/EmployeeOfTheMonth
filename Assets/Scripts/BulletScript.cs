@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class BulletScript : MonoBehaviour
 {
+	public GameObject source;
+	public float BulletSpeed = 10;
+	public int BulletDamage = 1;
+	public float BulletMaxTime = 2;
+	private float BulletAliveTime = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -13,9 +18,9 @@ public class BulletScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		float a = transform.GetChild(0).GetComponent<SpriteRenderer>().color.a;
-		a -= 2* Time.deltaTime;
-        transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, a);
-        if(a <= 0) Destroy(gameObject);
+		BulletAliveTime += Time.deltaTime;
+		if(BulletAliveTime > BulletMaxTime) Destroy(gameObject);
+		
+		transform.position += (transform.rotation * new Vector3(1, 0, 0)) * Time.deltaTime * BulletSpeed;
     }
 }
