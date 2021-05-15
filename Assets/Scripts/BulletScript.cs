@@ -12,7 +12,7 @@ public class BulletScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -23,4 +23,11 @@ public class BulletScript : MonoBehaviour
 		
 		transform.position += (transform.rotation * new Vector3(1, 0, 0)) * Time.deltaTime * BulletSpeed;
     }
+
+	void OnTriggerEnter2D(Collider2D other)
+	{
+		Debug.Log("Trigger");
+		if (other.gameObject.layer == 9)
+			Destroy(gameObject);
+	}
 }
