@@ -262,6 +262,11 @@ namespace HelloWorld {
 			}
 		}
 
+		bool IsPlayerTheCameraFocus()
+		{
+			return gameObject == cameraFocus;
+		}
+
 		void Die()
 		{
 			if (IsLocalPlayer)
@@ -279,7 +284,7 @@ namespace HelloWorld {
 		private double xp(Vector2 a, Vector2 b) { return a.x * b.y - a.y * b.x; }
 
 		void loadPoints(){
-			if (!IsLocalPlayer) return;
+			if (!IsPlayerTheCameraFocus()) return;
 			bool x = false;
 			if(gotFrom != MapScript.instance) {
 				points = new Vector2[MapScript.instance.points.Count + 1];
@@ -348,7 +353,7 @@ namespace HelloWorld {
 		
 		
 		void DrawRays(){
-			if (!IsLocalPlayer) return;
+			if (!IsPlayerTheCameraFocus()) return;
 			for(int i = 1; i < points.Length; ++i){
 				Vector2 v = ogpoints[i];
 				LayerMask mask = LayerMask.GetMask("BulletWall");
