@@ -105,6 +105,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3890640050502609548}
+  - component: {fileID: 1358132483794350013}
   - component: {fileID: 3428495538373425892}
   - component: {fileID: 3593717417602508686}
   - component: {fileID: 2478864407823385007}
@@ -132,6 +133,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1358132483794350013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7227319422900188694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f182942bde349c2458a520ff595dbfb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &3428495538373425892
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -256,6 +269,7 @@ MonoBehaviour:
   adir: {x: 0, y: 0}
   nattacks: 0
   speed: 3
+  maxHp: 0
   playerCamera: {fileID: 0}
   cameraFocus: {fileID: 0}
   lastAttacker: {fileID: 0}
@@ -266,6 +280,10 @@ MonoBehaviour:
   AttackObject: {fileID: 3928638637860585075, guid: 8ce0d0928e5f6b5429950ca66bf4efec, type: 3}
   amountOfObstacleCollisions: 0
   isDead: 0
+  variableSpeed:
+    m_InternalValue: 0
+  variableAttackDelay:
+    m_InternalValue: 0
   PlayerName:
     m_InternalValue: 
   Position:
@@ -278,3 +296,4 @@ MonoBehaviour:
     m_InternalValue: 0
   HPHasBeenSet:
     m_InternalValue: 0
+  interpolationFramesCount: 45

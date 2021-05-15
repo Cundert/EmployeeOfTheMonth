@@ -23,29 +23,16 @@ public class CameraController : MonoBehaviour
 	
 	
 
-	Texture2D toTexture2D(RenderTexture rTex){
-		if(rTex == null) return StencilImage;
-		RenderTexture.active = rTex;
-		int w = rTex.width;
-		int h = rTex.height;
-		Texture2D tex = new Texture2D(w, h, TextureFormat.RGB24, false);
-		// ReadPixels looks at the active RenderTexture.
-		tex.ReadPixels(new Rect(0, 0, w, h), 0, 0);
-		tex.Apply();
-		return tex;
-	}
-
 	
+
+	/*
 	void OnRenderImage (RenderTexture source, RenderTexture destination)
     {
 		BackCameraController.instance.CreateMaskImage();
-		//destination = BackCameraController.instance.MaskImage;
-		//return;
-		StencilImage = toTexture2D(BackCameraController.instance.MaskImage);
-		
-        material.SetTexture("_StencilBuffer", StencilImage);
+        material.SetTexture("_StencilBuffer", BackCameraController.instance.MaskTexture);
         Graphics.Blit (source, destination, material);
-        Destroy (StencilImage);
+        
     }
+    */
 	
 }

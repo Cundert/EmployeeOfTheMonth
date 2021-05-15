@@ -30,17 +30,31 @@ Shader "Unlit/StencilShader"
                 float2 uv : TEXCOORD0;
                 UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
+                float2 fovuv : TEXCOORD2;
+                float4 ogvert : TEXCOORD3;
             };
 
 			uniform sampler2D _StencilBuffer;
             sampler2D _MainTex;
             float4 _MainTex_ST;
             
-
+			inline float2 ObjToScreenUV(in float3 obj_pos)
+			{
+				float4 clip_pos4d = UnityObjectToClipPos(obj_pos);
+				float2 clip_pos2d = clip_pos4d.xy / clip_pos4d.w;
+				#if UNITY_UV_STARTS_AT_TOP
+					return float2(1 + clip_pos2d.x, 1 - clip_pos2d.y) / 2;
+				#else
+					return (1 + clip_pos2d) / 2;
+				#endif
+			}
+			
             v2f vert (appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
+                o.ogvert = mul( unity_ObjectToWorld, v.vertex );
+                o.fovuv = ObjToScreenUV(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 UNITY_TRANSFER_FOG(o,o.vertex);
                 return o;
@@ -51,9 +65,15 @@ Shader "Unlit/StencilShader"
                 // sample the texture
                 float prop = 0.8;
                 fixed4 col = tex2D(_MainTex, i.uv);
-                fixed4 mask = tex2D(_StencilBuffer, i.uv);
+                fixed4 mask = tex2D(_StencilBuffer, i.fovuv);
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
+                
+                float z = i.ogvert.z;
+                //return z;
+                
+                if(mask.r == 0 && z < 5) discard;
+                
                 return col * (mask.r * prop + 1 - prop);
             }
             ENDCG
