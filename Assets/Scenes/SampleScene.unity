@@ -416,7 +416,7 @@ GameObject:
   - component: {fileID: 1175989688}
   - component: {fileID: 1175989687}
   - component: {fileID: 1175989702}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: bulletcolliders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1365,7 +1365,7 @@ GameObject:
   - component: {fileID: 1306199930}
   - component: {fileID: 1306199929}
   - component: {fileID: 1306199928}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: colliders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2549,3 +2549,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e0adc6019786345b472340bfe5954d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  points: []
