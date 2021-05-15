@@ -223,7 +223,7 @@ namespace HelloWorld {
 			isDead = true;
 		}
 
-    void loadPoints(){
+		void loadPoints(){
 			points = MapScript.instance.points;
 		}
 		
@@ -299,17 +299,16 @@ namespace HelloWorld {
 		}
 
 
-			void OnTriggerEnter2D(Collider2D other)
+		void OnTriggerEnter2D(Collider2D other)
+		{
+			// If the Player has collided with a bullet that isn't theirs, and the Player is the local one
+			// Then reduce the Player's health
+			if (!isDead && other.gameObject.tag == "Bullet" && other.GetComponent<BulletScript>().source != gameObject)
 			{
-				// If the Player has collided with a bullet that isn't theirs, and the Player is the local one
-				// Then reduce the Player's health
-				if (!isDead && other.gameObject.tag == "Bullet" && other.GetComponent<BulletScript>().source != gameObject)
-				{
-					lastAttacker = other.GetComponent<BulletScript>().source;
-					if (IsLocalPlayer) UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage * -1);
-				}
+				lastAttacker = other.GetComponent<BulletScript>().source;
+				if (IsLocalPlayer) UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage * -1);
 			}
-
 		}
 	}
 }
+
