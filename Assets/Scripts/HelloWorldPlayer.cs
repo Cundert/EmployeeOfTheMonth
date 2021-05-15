@@ -192,7 +192,7 @@ namespace HelloWorld {
 			// todo
 			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
 			bullet.GetComponent<BulletScript>().source = gameObject;
-			bullet.GetComponent<BulletScript>().BulletDamage=damage;
+			bullet.GetComponent<BulletScript>().BulletDamage=10;
 		}
 
 
@@ -433,7 +433,9 @@ namespace HelloWorld {
 			if (!isDead && other.gameObject.tag == "Bullet" && other.GetComponent<BulletScript>().source != gameObject)
 			{
 				lastAttacker = other.GetComponent<BulletScript>().source;
-				if (IsLocalPlayer) UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage * -1);
+				if (IsLocalPlayer) {
+					UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage*-1);
+				}
 			}
 
 			if (!isDead && other.gameObject.tag=="Item") {
