@@ -1,20 +1,28 @@
 
 using MLAPI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace HelloWorld {
 	public class HelloWorldManager : MonoBehaviour {
 
 		string playerName="Name";
+		static bool gameStarted = false;
+
+		private void OnEnable() {
+			DontDestroyOnLoad(this.gameObject);
+		}
 
 		void OnGUI() {
 			GUILayout.BeginArea(new Rect(10, 10, 300, 300));
 			if (!NetworkManager.Singleton.IsClient&&!NetworkManager.Singleton.IsServer) {
 				StartButtons();
 				playerName=GUILayout.TextField(playerName, 10);
-			} else {
+			} else if (!gameStarted) {
 				StatusLabels(playerName);
 				SubmitNewPosition();
+			} else {
+				StatusLabels(playerName);
 			}
 
 			GUILayout.EndArea();
@@ -55,7 +63,10 @@ namespace HelloWorld {
 						player.Move();
 					}
 				}*/
-				if (NetworkManager.Singleton.IsServer) Debug.Log("Me desaparesco");
+				if (NetworkManager.Singleton.IsServer) {
+					gameStarted=true;
+					SceneManager.LoadScene("SampleScene");
+				}
 			}
 		}
 	}

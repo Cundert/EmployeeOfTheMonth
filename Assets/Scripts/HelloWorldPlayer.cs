@@ -22,6 +22,7 @@ namespace HelloWorld {
 
 		private void OnEnable() {
 			PlayerName.OnValueChanged+=DisplayNames;
+			DontDestroyOnLoad(this.gameObject);
 		}
 
 		private void OnDisable() {
