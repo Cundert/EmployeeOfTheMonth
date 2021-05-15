@@ -275,7 +275,7 @@ namespace HelloWorld {
 
 		bool IsPlayerTheCameraFocus()
 		{
-			return GameObject.ReferenceEquals(gameObject, cameraFocus);
+			return GameObject.ReferenceEquals(NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject.gameObject, gameObject);
 		}
 
 		void Die()
