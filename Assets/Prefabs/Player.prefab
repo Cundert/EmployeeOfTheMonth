@@ -234,7 +234,7 @@ Rigidbody2D:
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
@@ -250,19 +250,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3bb1032e2b48964fa51f319b53a37a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  points: []
   dir: {x: 0, y: 0}
   adir: {x: 0, y: 0}
   nattacks: 0
   speed: 3
-  PlayerName:
-    m_InternalValue: 
+  playerCamera: {fileID: 0}
+  cameraFocus: {fileID: 0}
+  lastAttacker: {fileID: 0}
+  kills: []
   attackDelay: 0.2
   lastAttack: 0
   Timer: 0
   AttackObject: {fileID: 3928638637860585075, guid: 8ce0d0928e5f6b5429950ca66bf4efec, type: 3}
+  amountOfObstacleCollisions: 0
+  isDead: 0
+  PlayerName:
+    m_InternalValue: 
   Position:
     m_InternalValue: {x: 0, y: 0, z: 0}
   AttackDir:
     m_InternalValue: {x: 0, y: 0, z: 0}
   NAttacks:
+    m_InternalValue: 0
+  HP:
+    m_InternalValue: 0
+  HPHasBeenSet:
     m_InternalValue: 0

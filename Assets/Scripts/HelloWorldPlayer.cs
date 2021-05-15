@@ -193,11 +193,21 @@ namespace HelloWorld {
 			return adir;
 		}
 
+		public int interpolationFramesCount = 45; // Number of frames to completely interpolate between the 2 positions
+		int elapsedFrames = 0;
+
 		void MoveCamera()
 		{
-			Vector3 serverPosition = cameraFocus.GetComponent<HelloWorldPlayer>().transform.position;
-			Vector3 possibleFuturePosition = new Vector3(serverPosition.x, serverPosition.y, -10);
-			playerCamera.transform.position = possibleFuturePosition;
+			float interpolationRatio = (float)elapsedFrames/interpolationFramesCount;
+
+			Vector3 localPosition = cameraFocus.GetComponent<HelloWorldPlayer>().transform.position;
+			Vector3 newPosition = new Vector3(localPosition.x, localPosition.y, -10);
+
+			Vector3 interpolatedPosition = Vector3.Lerp(playerCamera.transform.position, newPosition, interpolationRatio);
+			elapsedFrames=(elapsedFrames+1)%(interpolationFramesCount+1);  // reset elapsedFrames to zero after it reached (interpolationFramesCount + 1)
+
+
+			playerCamera.transform.position = interpolatedPosition;
 		}
 
 		void ChangeCameraFocus(GameObject focus)
@@ -249,7 +259,6 @@ namespace HelloWorld {
 			cameraFocus = gameObject;
       HelloWorldManager.players.Add(this);
 		}
-
 
 		void Update()
 		{
