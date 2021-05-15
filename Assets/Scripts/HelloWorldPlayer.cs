@@ -261,6 +261,7 @@ namespace HelloWorld {
 
 		void ChangeCameraFocus(GameObject focus)
 		{
+			Destroy(cameraFocus.GetComponent<HelloWorldPlayer>().FanVision);
 			cameraFocus = focus;
 		}
 
@@ -275,7 +276,13 @@ namespace HelloWorld {
 
 		bool IsPlayerTheCameraFocus()
 		{
-			return GameObject.ReferenceEquals(NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject.gameObject, gameObject);
+			HelloWorldPlayer playerObject = NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject.gameObject.GetComponent<HelloWorldPlayer>();	
+
+			Debug.Log(string.Format("Focus of player: {0} This object: {1}",
+				playerObject.cameraFocus.GetInstanceID(),
+				gameObject.GetInstanceID())
+			); 
+			return GameObject.ReferenceEquals(playerObject.cameraFocus, gameObject);
 		}
 
 		void Die()
@@ -386,6 +393,7 @@ namespace HelloWorld {
 
 		void Update()
 		{
+
 			if (!isDead && HPHasBeenSet.Value && HP.Value == 0)
 				Die();
 			while (!isDead && nattacks < NAttacks.Value)
