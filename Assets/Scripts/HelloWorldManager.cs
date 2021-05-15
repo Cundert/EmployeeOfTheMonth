@@ -3,11 +3,15 @@ using MLAPI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI.SceneManagement;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace HelloWorld {
 	public class HelloWorldManager : MonoBehaviour {
 
 		string playerName="Name";
+
+		public static List<HelloWorldPlayer> players = new List<HelloWorldPlayer>();
 
 		private void OnEnable() {
 			DontDestroyOnLoad(this.gameObject);
@@ -60,13 +64,6 @@ namespace HelloWorld {
 
 		static void SubmitNewPosition() {
 			if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Start" : "Waiting for server")) {
-				/*if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId,
-					out var networkedClient)) {
-					var player = networkedClient.PlayerObject.GetComponent<HelloWorldPlayer>();
-					if (player) {
-						player.Move();
-					}
-				}*/
 				if (NetworkManager.Singleton.IsServer) {
 					NetworkSceneManager.SwitchScene("SampleScene");
 				}

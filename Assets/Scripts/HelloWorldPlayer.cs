@@ -71,6 +71,12 @@ namespace HelloWorld {
 			InitializeHPServerRpc(20);
 		}
 
+		public void SetPosition(Vector3 pos) {
+			if (!IsLocalPlayer) return;
+			transform.position=pos;
+			UpdatePositionServerRpc(transform.position);
+		}
+
 		public void Move() {
 			if (!IsLocalPlayer) return;
 			transform.position+=new Vector3(dir.x, dir.y, 0);
@@ -186,6 +192,7 @@ namespace HelloWorld {
 			isDead=false;
             playerCamera = CameraController.instance;
 			cameraFocus=gameObject;
+			HelloWorldManager.players.Add(this);
         }
 
 		void Update() {
