@@ -4,12 +4,12 @@ using MLAPI.NetworkVariable;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
-namespace HelloWorld
-{
-	public class HelloWorldPlayer : NetworkBehaviour
-	{
-
+namespace HelloWorld {
+	public class HelloWorldPlayer : NetworkBehaviour {
+		public List<Vector2> points;
+	  
 		public Vector2 dir, adir;
 		public int nattacks;
 		public float speed;
@@ -147,6 +147,7 @@ namespace HelloWorld
 			bullet.GetComponent<BulletScript>().source = gameObject;
 		}
 
+
 		Vector2 getMovementVector(float val)
 		{
 			Vector2 dir = new Vector2(0, 0);
@@ -222,6 +223,20 @@ namespace HelloWorld
 			isDead = true;
 		}
 
+    void loadPoints(){
+			points = MapScript.instance.points;
+		}
+		
+		void DrawRays(){
+			foreach(Vector2 v in points){
+				LayerMask mask = LayerMask.GetMask("BulletWall");
+				RaycastHit2D hit = Physics2D.Raycast(transform.position, v - new Vector2(transform.position.x, transform.position.y), 2000.0f, mask);
+				if (hit != null){
+					Debug.DrawLine(transform.position, hit.point, Color.white);
+				}
+			}
+		}
+
 		void Start()
 		{
 			isDead = false;
@@ -276,6 +291,12 @@ namespace HelloWorld
 					if (!isDead) transform.position = Position.Value;
 				}
 			}
+		}
+		
+		void FixedUpdate(){
+			loadPoints();
+			DrawRays();
+		}
 
 
 			void OnTriggerEnter2D(Collider2D other)
