@@ -2,6 +2,7 @@
 using MLAPI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using MLAPI.SceneManagement;
 
 namespace HelloWorld {
 	public class HelloWorldManager : MonoBehaviour {
@@ -65,7 +66,7 @@ namespace HelloWorld {
 				}*/
 				if (NetworkManager.Singleton.IsServer) {
 					gameStarted=true;
-					SceneManager.LoadScene("SampleScene");
+					NetworkSceneManager.SwitchScene("SampleScene");
 				}
 			}
 		}
