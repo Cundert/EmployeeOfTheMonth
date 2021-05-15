@@ -2,6 +2,8 @@ using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace HelloWorld {
 	public class HelloWorldPlayer : NetworkBehaviour {
@@ -11,6 +13,10 @@ namespace HelloWorld {
 		public float speed;
 
         public CameraController playerCamera;
+		public GameObject cameraFocus;
+		public GameObject lastAttacker;
+
+		public List<HelloWorldPlayer> kills = new List<HelloWorldPlayer>();
 		
 		public float attackDelay = 0.2f;
 		public float lastAttack = 0.0f;
@@ -19,7 +25,8 @@ namespace HelloWorld {
 		public GameObject AttackObject;
 
 		public int amountOfObstacleCollisions = 0;
-    
+		public bool isDead;
+
 		public NetworkVariableString PlayerName = new NetworkVariableString(new NetworkVariableSettings {
 			WritePermission=NetworkVariablePermission.ServerOnly,
 			ReadPermission=NetworkVariablePermission.Everyone
@@ -165,55 +172,93 @@ namespace HelloWorld {
 
         void MoveCamera()
         {
-            Vector3 serverPosition = Position.Value;
+            Vector3 serverPosition = cameraFocus.GetComponent<HelloWorldPlayer>().Position.Value;
             Vector3 possibleFuturePosition = new Vector3(serverPosition.x, serverPosition.y, -10);
             if (Vector3.Distance(playerCamera.transform.position, possibleFuturePosition) > 0.04)
                 playerCamera.transform.position = possibleFuturePosition;
         }
 
+		void ChangeCameraFocus(GameObject focus) {
+			cameraFocus=focus;
+		}
+
+		void UpdateMyKillsCamera(GameObject focus) {
+			foreach (HelloWorldPlayer ded in kills) {
+				ded.ChangeCameraFocus(focus);
+				ded.UpdateMyKillsCamera(focus);
+			}
+		}
+
+		void Die() {
+			if (IsLocalPlayer) {
+				ChangeCameraFocus(lastAttacker);
+			}
+			UpdateMyKillsCamera(lastAttacker);
+			lastAttacker.GetComponent<HelloWorldPlayer>().kills.Add(this);
+			gameObject.layer=6;
+			GetComponent<SpriteRenderer>().enabled=false;
+			transform.GetChild(0).GetComponent<MeshRenderer>().enabled=false;
+			isDead=true;
+		}
+
         void Start()
         {
+			isDead=false;
             playerCamera = CameraController.instance;
+			cameraFocus=gameObject;
         }
 
+
 		void Update() {
-			Debug.Log(amountOfObstacleCollisions);
-
-            if (HPHasBeenSet.Value && HP.Value == 0)
-                Destroy(gameObject);
-
-            while (nattacks < NAttacks.Value){
+			if (!isDead&&HPHasBeenSet.Value&&HP.Value==0)
+				Die();
+      while (!isDead && nattacks < NAttacks.Value){
 				++nattacks;
 				generateAttack();
 			}
 
 			if (IsLocalPlayer)
 			{
-				Timer += Time.deltaTime;
-				float deltaMovement = speed * Time.deltaTime;
+				if (!isDead) {
+          Timer += Time.deltaTime;
+          
+					dir=getMovementVector(speed*Time.deltaTime);
+          adir = getAttackVector();
 
-				dir = getMovementVector(deltaMovement);
-				Move();
+          Move();
+          Attack();
+				}
 				MoveCamera();
 
 
-				adir = getAttackVector();
 
-				Attack();
+			if (IsLocalPlayer) {
+				if (!isDead) {
+					Timer+=Time.deltaTime;
+
+					dir=getMovementVector(speed*Time.deltaTime);
+					adir=getAttackVector();
+
+					Move();
+					Attack();
+				}
+				MoveCamera();
 
             } else {
-				transform.position=Position.Value;
+				if (!isDead) transform.position=Position.Value;
 			}
 		}
 
-		void OnTriggerEnter2D(Collider2D other)
-		{
-			// If the Player has collided with a bullet that isn't theirs, and the Player is the local one
-			// Then reduce the Player's health
-			if (other.gameObject.tag == "Bullet" && other.GetComponent<BulletScript>().source != gameObject && IsLocalPlayer) {
-				UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage*-1);
-			}
-		}
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+      // If the Player has collided with a bullet that isn't theirs, and the Player is the local one
+      // Then reduce the Player's health
+      if (!isDead && other.gameObject.tag == "Bullet" && other.GetComponent<BulletScript>().source != gameObject) {
+			lastAttacker=other.GetComponent<BulletScript>().source;
+			if (IsLocalPlayer) UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage*-1);
+      }
+    }
 
 	}
 }
