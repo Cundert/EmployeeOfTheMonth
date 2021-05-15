@@ -418,6 +418,7 @@ namespace HelloWorld {
 					SetPlayerAttackDelayServerRpc(attackDelay);
 					// La bajada de stats de server a local se hace en update para evitar problemas de sincronizacion
 				}
+				other.GetComponent<PickableObject>().DestroyItem();
 			}
 		}
 	}
