@@ -26,7 +26,6 @@ public class BulletScript : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		Debug.Log("Trigger");
 		if (other.gameObject.layer == 9)
 			Destroy(gameObject);
 	}
