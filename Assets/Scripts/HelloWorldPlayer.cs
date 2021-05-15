@@ -12,7 +12,9 @@ namespace HelloWorld {
 	  
 		public Vector2 dir, adir;
 		public int nattacks;
-		public float speed;
+		[HideInInspector]
+		public float speed; // Speed of the player
+		public int maxHp;
 
 		public CameraController playerCamera;
 		public GameObject cameraFocus;
@@ -20,7 +22,9 @@ namespace HelloWorld {
 
 		public List<HelloWorldPlayer> kills = new List<HelloWorldPlayer>();
 
-		public float attackDelay = 0.2f;
+		[HideInInspector]
+		public float attackDelay; // Delay between attacks
+
 		public float lastAttack = 0.0f;
 		public float Timer = 0.0f;
 
@@ -28,6 +32,11 @@ namespace HelloWorld {
 
 		public int amountOfObstacleCollisions = 0;
 		public bool isDead;
+
+		// Variable stats
+		public NetworkVariableFloat variableSpeed = new NetworkVariableFloat();
+		public NetworkVariableFloat variableAttackDelay = new NetworkVariableFloat();
+
 
 		public NetworkVariableString PlayerName = new NetworkVariableString(new NetworkVariableSettings
 		{
@@ -69,6 +78,9 @@ namespace HelloWorld {
 		{
 			PlayerName.OnValueChanged += DisplayNames;
 			DontDestroyOnLoad(this.gameObject);
+			attackDelay=0.75f;
+			speed=3.0f;
+			maxHp=10;
 		}
 
 		private void OnDisable()
@@ -79,7 +91,7 @@ namespace HelloWorld {
 		public override void NetworkStart()
 		{
 			Move();
-			InitializeHPServerRpc(20);
+			InitializeHPServerRpc(maxHp);
 		}
 
     public void SetPosition(Vector3 pos) {
@@ -111,6 +123,16 @@ namespace HelloWorld {
 			{
 				transform.GetChild(0).gameObject.GetComponent<TextMesh>().text = after;
 			}
+		}
+
+		[ServerRpc]
+		public void SetPlayerSpeedServerRpc(float speed, ServerRpcParams rpcParams = default) {
+			variableSpeed.Value=speed;
+		}
+
+		[ServerRpc]
+		public void SetPlayerAttackDelayServerRpc(float delay, ServerRpcParams rpcParams = default) {
+			variableAttackDelay.Value=delay;
 		}
 
 		[ServerRpc]
@@ -286,7 +308,11 @@ namespace HelloWorld {
 			}
 			else
 			{
-				if (!isDead) transform.position = Position.Value;
+				if (!isDead) {
+					transform.position=Position.Value;
+					speed=variableSpeed.Value;
+					attackDelay=variableAttackDelay.Value;
+				}
 			}
 		}
 		
@@ -304,6 +330,16 @@ namespace HelloWorld {
 			{
 				lastAttacker = other.GetComponent<BulletScript>().source;
 				if (IsLocalPlayer) UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage * -1);
+			}
+
+			if (!isDead && other.gameObject.tag=="Item") {
+				if (IsLocalPlayer) {
+					other.GetComponent<PickableObject>().PickItem(this);
+					// Subir stats de local a server
+					SetPlayerSpeedServerRpc(speed);
+					SetPlayerAttackDelayServerRpc(attackDelay);
+					// La bajada de stats de server a local se hace en update para evitar problemas de sincronizacion
+				}
 			}
 		}
 	}
