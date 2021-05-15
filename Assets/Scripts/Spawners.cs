@@ -45,11 +45,11 @@ public class Spawners : MonoBehaviour
 		else
 			IAmReadyServerRpc();
 
-		if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId,
-					out var networkedClient)) {
+		if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient)) {
 			var player = networkedClient.PlayerObject.GetComponent<HelloWorldPlayer>();
 			if (player) {
-				while (Readies.Value < NetworkManager.Singleton.ConnectedClients.Count()) ;
+				//while (Readies.Value < NetworkManager.Singleton.ConnectedClients.Count()) ;
+				while (!HasBeenShuffled.Value) ;
 				int i = (int)NetworkManager.Singleton.LocalClientId;
 				player.SetPosition(spawnPositions[i].transform.position);
 			}
