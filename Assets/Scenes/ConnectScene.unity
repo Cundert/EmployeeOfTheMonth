@@ -452,6 +452,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35ac5664cb3a14d4aa27cc0044dedd5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaskTexture: {fileID: 0}
 --- !u!20 &1828357717
 Camera:
   m_ObjectHideFlags: 0
@@ -605,7 +606,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb2e3194a67034040877b13eaed6be23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: c5b9412dc019a514699d0fd9b032efa6, type: 2}
 --- !u!1 &1902378456
 GameObject:
   m_ObjectHideFlags: 0
@@ -847,6 +847,7 @@ GameObject:
   - component: {fileID: 2115544055}
   - component: {fileID: 2115544054}
   - component: {fileID: 2115544056}
+  - component: {fileID: 2115544057}
   m_Layer: 0
   m_Name: map
   m_TagString: Untagged
@@ -935,3 +936,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points: []
+--- !u!114 &2115544057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115544053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f182942bde349c2458a520ff595dbfb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
