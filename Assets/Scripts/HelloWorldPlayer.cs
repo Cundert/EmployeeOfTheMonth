@@ -10,14 +10,20 @@ namespace HelloWorld {
 		public Vector2 dir, adir;
 		public int nattacks;
 		public float speed;
-        public CameraController playerCamera;
+
+     public CameraController playerCamera;
 		
 		public float attackDelay = 0.2f;
 		public float lastAttack = 0.0f;
 		public float Timer = 0.0f;
 		
 		public GameObject AttackObject;
-		
+    
+		public NetworkVariableString PlayerName = new NetworkVariableString(new NetworkVariableSettings {
+			WritePermission=NetworkVariablePermission.ServerOnly,
+			ReadPermission=NetworkVariablePermission.Everyone
+		});
+
 		public NetworkVariableVector3 Position = new NetworkVariableVector3(new NetworkVariableSettings {
 			WritePermission=NetworkVariablePermission.ServerOnly,
 			ReadPermission=NetworkVariablePermission.Everyone
@@ -32,6 +38,15 @@ namespace HelloWorld {
 			WritePermission=NetworkVariablePermission.ServerOnly,
 			ReadPermission=NetworkVariablePermission.Everyone
 		});
+
+		private void OnEnable() {
+			PlayerName.OnValueChanged+=DisplayNames;
+			DontDestroyOnLoad(this.gameObject);
+		}
+
+		private void OnDisable() {
+			PlayerName.OnValueChanged-=DisplayNames;
+		}
 
 		public override void NetworkStart() {
 			Move();
@@ -50,6 +65,18 @@ namespace HelloWorld {
 			if(lastAttack + attackDelay > Timer) return;
 			lastAttack = Timer;
 			UpdateAttackServerRpc(adir);
+		}
+
+		void DisplayNames(string before, string after) {
+			string childname = transform.GetChild(0).gameObject.GetComponent<TextMesh>().text;
+			if (childname!=after) {
+				transform.GetChild(0).gameObject.GetComponent<TextMesh>().text=after;
+			}
+		}
+
+		[ServerRpc]
+		public void SetPlayerNameServerRpc(string name, ServerRpcParams rpcParams = default) {
+			PlayerName.Value=name;
 		}
 
 		[ServerRpc]
