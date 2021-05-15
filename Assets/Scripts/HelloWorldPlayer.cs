@@ -192,7 +192,7 @@ namespace HelloWorld {
 			// todo
 			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
 			bullet.GetComponent<BulletScript>().source = gameObject;
-			bullet.GetComponent<BulletScript>().BulletDamage=10;
+			bullet.GetComponent<BulletScript>().BulletDamage=damage;
 		}
 
 
