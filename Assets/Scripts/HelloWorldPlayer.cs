@@ -23,6 +23,9 @@ namespace HelloWorld {
 		public int nattacks;
 		[HideInInspector]
 		public float speed; // Speed of the player
+		[HideInInspector]
+		public int damage; // Damage that the player does per bullet
+		[HideInInspector]
 		public int maxHp;
 
 		public CameraController playerCamera;
@@ -45,6 +48,7 @@ namespace HelloWorld {
 		// Variable stats
 		public NetworkVariableFloat variableSpeed = new NetworkVariableFloat();
 		public NetworkVariableFloat variableAttackDelay = new NetworkVariableFloat();
+		public NetworkVariableInt variableDamage = new NetworkVariableInt();
 
 
 		public NetworkVariableString PlayerName = new NetworkVariableString(new NetworkVariableSettings
@@ -90,6 +94,7 @@ namespace HelloWorld {
 			attackDelay=0.75f;
 			speed=3.0f;
 			maxHp=10;
+			damage=1;
 		}
 
 		private void OnDisable()
@@ -145,6 +150,11 @@ namespace HelloWorld {
 		}
 
 		[ServerRpc]
+		public void SetPlayerDamageDelayServerRpc(int dmg, ServerRpcParams rpcParams = default) {
+			variableDamage.Value=dmg;
+		}
+
+		[ServerRpc]
 		public void SetPlayerNameServerRpc(string name, ServerRpcParams rpcParams = default)
 		{
 			PlayerName.Value = name;
@@ -182,6 +192,7 @@ namespace HelloWorld {
 			// todo
 			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
 			bullet.GetComponent<BulletScript>().source = gameObject;
+			bullet.GetComponent<BulletScript>().BulletDamage=damage;
 		}
 
 
@@ -358,7 +369,7 @@ namespace HelloWorld {
 			isDead = false;
 			playerCamera = CameraController.instance;
 			cameraFocus = gameObject;
-      HelloWorldManager.players.Add(this);
+			HelloWorldManager.players.Add(this);
 		}
 
 		void Update()
@@ -391,6 +402,7 @@ namespace HelloWorld {
 					transform.position=Position.Value;
 					speed=variableSpeed.Value;
 					attackDelay=variableAttackDelay.Value;
+					damage=variableDamage.Value;
 				}
 			}
 			Graphics.DrawMesh(FanVision, (new Vector3(transform.position.x, -transform.position.y, -transform.position.z)) - new Vector3(0,0,15), Quaternion.Euler(0, 180, 0), material, 0);
@@ -418,6 +430,7 @@ namespace HelloWorld {
 					// Subir stats de local a server
 					SetPlayerSpeedServerRpc(speed);
 					SetPlayerAttackDelayServerRpc(attackDelay);
+					SetPlayerDamageDelayServerRpc(damage);
 					// La bajada de stats de server a local se hace en update para evitar problemas de sincronizacion
 				}
 				other.GetComponent<PickableObject>().DestroyItem();
