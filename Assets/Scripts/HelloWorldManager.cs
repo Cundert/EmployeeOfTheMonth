@@ -19,16 +19,16 @@ namespace HelloWorld {
 			if (!NetworkManager.Singleton.IsClient&&!NetworkManager.Singleton.IsServer) {
 				StartButtons();
 				playerName=GUILayout.TextField(playerName, 10);
-			} else if (!gameStarted) {
-				StatusLabels(playerName);
+			} else if (SceneManager.GetActiveScene().name=="ConnectScene") {
+				StatusLabels();
+				ShowName(playerName);
 				SubmitNewPosition();
-			} /*else {
-				StatusLabels(playerName);
-			}*/
+			} else {
+				ShowName(playerName);
+			}
 
 			GUILayout.EndArea();
 		}
-
 
 		void StartButtons() {
 			if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
@@ -36,14 +36,18 @@ namespace HelloWorld {
 			if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
 		}
 
-		static void StatusLabels(string playerName) {
+		static void StatusLabels() {
 			var mode = NetworkManager.Singleton.IsHost ?
 				"Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
 
 			GUILayout.Label("Transport: "+
 				NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
 			GUILayout.Label("Mode: "+mode);
-			string pN="";
+			
+		}
+
+		static void ShowName(string playerName) {
+			string pN = "";
 			if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId,
 					out var networkedClient)) {
 				var player = networkedClient.PlayerObject.GetComponent<HelloWorldPlayer>();
