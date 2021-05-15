@@ -24,7 +24,7 @@ namespace HelloWorld {
 		[HideInInspector]
 		public float speed; // Speed of the player
 		[HideInInspector]
-		public int damage = 10; // Damage that the player does per bullet
+		public int damage; // Damage that the player does per bullet
 		[HideInInspector]
 		public int maxHp;
 
@@ -94,7 +94,7 @@ namespace HelloWorld {
 			attackDelay=0.75f;
 			speed=3.0f;
 			maxHp=10;
-			damage=10;
+			damage=1;
 		}
 
 		private void OnDisable()
