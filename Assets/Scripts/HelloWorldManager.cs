@@ -8,7 +8,6 @@ namespace HelloWorld {
 	public class HelloWorldManager : MonoBehaviour {
 
 		string playerName="Name";
-		static bool gameStarted = false;
 
 		private void OnEnable() {
 			DontDestroyOnLoad(this.gameObject);
@@ -69,7 +68,6 @@ namespace HelloWorld {
 					}
 				}*/
 				if (NetworkManager.Singleton.IsServer) {
-					gameStarted=true;
 					NetworkSceneManager.SwitchScene("SampleScene");
 				}
 			}

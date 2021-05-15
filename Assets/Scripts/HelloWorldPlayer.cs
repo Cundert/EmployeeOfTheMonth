@@ -185,7 +185,7 @@ namespace HelloWorld {
       // If the Player has collided with a bullet that isn't theirs, and the Player is the local one
       // Then reduce the Player's health
       if (other.gameObject.tag == "Bullet" && other.GetComponent<BulletScript>().source != gameObject && IsLocalPlayer) {
-        UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage);
+        UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage*-1);
       }
     }
 
