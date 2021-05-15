@@ -150,7 +150,7 @@ namespace HelloWorld {
 		}
 
 		[ServerRpc]
-		public void SetPlayerDamageDelayServerRpc(int dmg, ServerRpcParams rpcParams = default) {
+		public void SetPlayerDamageServerRpc(int dmg, ServerRpcParams rpcParams = default) {
 			variableDamage.Value=dmg;
 		}
 
@@ -192,6 +192,7 @@ namespace HelloWorld {
 			// todo
 			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
 			bullet.GetComponent<BulletScript>().source = gameObject;
+			Debug.Log(damage);
 			bullet.GetComponent<BulletScript>().BulletDamage=damage;
 		}
 
@@ -386,7 +387,7 @@ namespace HelloWorld {
 
 		void Update()
 		{
-			if (!isDead && HPHasBeenSet.Value && HP.Value == 0)
+			if (!isDead && HPHasBeenSet.Value && HP.Value <= 0)
 				Die();
 			while (!isDead && nattacks < NAttacks.Value)
 			{
@@ -405,6 +406,10 @@ namespace HelloWorld {
 
 					Move();
 					Attack();
+
+					SetPlayerSpeedServerRpc(speed);
+					SetPlayerAttackDelayServerRpc(attackDelay);
+					SetPlayerDamageServerRpc(damage);
 				}
 				MoveCamera();
 			}
@@ -444,7 +449,7 @@ namespace HelloWorld {
 					// Subir stats de local a server
 					SetPlayerSpeedServerRpc(speed);
 					SetPlayerAttackDelayServerRpc(attackDelay);
-					SetPlayerDamageDelayServerRpc(damage);
+					SetPlayerDamageServerRpc(damage);
 					// La bajada de stats de server a local se hace en update para evitar problemas de sincronizacion
 				}
 				other.GetComponent<PickableObject>().DestroyItem();
