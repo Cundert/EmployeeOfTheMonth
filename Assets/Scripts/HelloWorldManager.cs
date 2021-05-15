@@ -22,9 +22,9 @@ namespace HelloWorld {
 			} else if (!gameStarted) {
 				StatusLabels(playerName);
 				SubmitNewPosition();
-			} else {
+			} /*else {
 				StatusLabels(playerName);
-			}
+			}*/
 
 			GUILayout.EndArea();
 		}
