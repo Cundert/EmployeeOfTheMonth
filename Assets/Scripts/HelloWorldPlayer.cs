@@ -406,6 +406,10 @@ namespace HelloWorld {
 
 					Move();
 					Attack();
+
+					SetPlayerSpeedServerRpc(speed);
+					SetPlayerAttackDelayServerRpc(attackDelay);
+					SetPlayerDamageServerRpc(damage);
 				}
 				MoveCamera();
 			}
