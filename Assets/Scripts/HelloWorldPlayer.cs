@@ -274,28 +274,10 @@ namespace HelloWorld {
 					Attack();
 				}
 				MoveCamera();
-
-
-
-				if (IsLocalPlayer)
-				{
-					if (!isDead)
-					{
-						Timer += Time.deltaTime;
-
-						dir = getMovementVector(speed * Time.deltaTime);
-						adir = getAttackVector();
-
-						Move();
-						Attack();
-					}
-					MoveCamera();
-
-				}
-				else
-				{
-					if (!isDead) transform.position = Position.Value;
-				}
+			}
+			else
+			{
+				if (!isDead) transform.position = Position.Value;
 			}
 		}
 		
