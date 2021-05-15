@@ -277,11 +277,6 @@ namespace HelloWorld {
 		bool IsPlayerTheCameraFocus()
 		{
 			HelloWorldPlayer playerObject = NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject.gameObject.GetComponent<HelloWorldPlayer>();	
-
-			Debug.Log(string.Format("Focus of player: {0} This object: {1}",
-				playerObject.cameraFocus.GetInstanceID(),
-				gameObject.GetInstanceID())
-			); 
 			return GameObject.ReferenceEquals(playerObject.cameraFocus, gameObject);
 		}
 
