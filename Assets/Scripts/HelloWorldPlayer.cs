@@ -5,10 +5,19 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using System;
 
 namespace HelloWorld {
 	public class HelloWorldPlayer : NetworkBehaviour {
-		public List<Vector2> points;
+		private Vector2[] points;
+		private Vector2[] ogpoints;
+		private Vector3[] meshPoints;
+		private int[] indices;
+		private MapScript gotFrom;
+		
+		public Material material;
+		
+		public Mesh FanVision;
 	  
 		public Vector2 dir, adir;
 		public int nattacks;
@@ -260,16 +269,84 @@ namespace HelloWorld {
 			isDead = true;
 		}
 
+		private double xp(Vector2 a, Vector2 b) { return a.x * b.y - a.y * b.x; }
+
 		void loadPoints(){
-			points = MapScript.instance.points;
+			bool x = false;
+			if(gotFrom != MapScript.instance) {
+				points = new Vector2[MapScript.instance.points.Count + 1];
+				ogpoints = new Vector2[MapScript.instance.points.Count + 1];
+				for(int i = 0; i < MapScript.instance.points.Count; ++i){
+					points[i + 1] = MapScript.instance.points[i];
+					ogpoints[i + 1] = MapScript.instance.points[i];
+				}
+				points[0] = new Vector2(transform.position.x, transform.position.y);
+				ogpoints[0] = new Vector2(transform.position.x, transform.position.y);
+				gotFrom = MapScript.instance;
+				meshPoints = new Vector3[MapScript.instance.points.Count+1];
+				indices = new int[MapScript.instance.points.Count * 3];
+				for(int i = 1; i < MapScript.instance.points.Count; ++i) {
+					int j = i + 1;
+					if(j == MapScript.instance.points.Count) j = 1;
+					indices[i*3] = 0;
+					indices[i*3+1] = i;
+					indices[i*3+2] = j;
+				}
+				
+				x = true;
+			}
+			points[0] = new Vector2(transform.position.x, transform.position.y);
+			
+			Array.Sort( points, delegate(Vector2 a, Vector2 b){
+				if(a.x == b.x && a.y == b.y) return 0;
+				if(a.x == transform.position.x && a.y == transform.position.y) return -1;
+				if(b.x == transform.position.x && b.y == transform.position.y) return 1;
+				// Es *posible* que haya *tomado prestado* este código de Stack Overflow.
+				Vector2 m_dreference = new Vector2(1, 0);
+				Vector2 m_origin = new Vector2(transform.position.x, transform.position.y);
+				
+				if(((a.x - m_origin.x) * (b.y - m_origin.y) - (b.x - m_origin.x) * (a.y - m_origin.y)) == 0) return 0;
+				
+				Vector2 da = a - m_origin, db = b - m_origin;
+				double detb = xp(m_dreference, db);
+
+				// nothing is less than zero degrees
+				if (detb == 0 && db.x * m_dreference.x + db.y * m_dreference.y >= 0) return -1;
+
+				double deta = xp(m_dreference, da);
+
+				// zero degrees is less than anything else
+				if (deta == 0 && da.x * m_dreference.x + da.y * m_dreference.y >= 0) return 1;
+
+				if (deta * detb >= 0) {
+					// both on same side of reference, compare to each other
+					return xp(da, db) > 0 ? 1 : -1;
+				}
+
+				// vectors "less than" zero degrees are actually large, near 2 pi
+				return deta > 0 ? 1 : -1;
+			});
+			
+			for(int i = 0; i < points.Length; ++i) meshPoints[i] = points[i];
+			
+			if(x){
+				FanVision = new Mesh();
+				FanVision.vertices = meshPoints;
+				FanVision.SetIndices(indices, MeshTopology.Triangles, 0);
+			}
+			FanVision.vertices = meshPoints;
 		}
 		
+		
+		
 		void DrawRays(){
-			foreach(Vector2 v in points){
+			for(int i = 1; i < points.Length; ++i){
+				Vector2 v = ogpoints[i];
 				LayerMask mask = LayerMask.GetMask("BulletWall");
 				RaycastHit2D hit = Physics2D.Raycast(transform.position, v - new Vector2(transform.position.x, transform.position.y), 2000.0f, mask);
 				if (hit != null){
 					Debug.DrawLine(transform.position, hit.point, Color.white);
+					points[i] = hit.point;
 				}
 			}
 		}
@@ -314,6 +391,7 @@ namespace HelloWorld {
 					attackDelay=variableAttackDelay.Value;
 				}
 			}
+			Graphics.DrawMesh(FanVision, (new Vector3(transform.position.x, -transform.position.y, -transform.position.z)) - new Vector3(0,0,15), Quaternion.Euler(0, 180, 0), material, 0);
 		}
 		
 		void FixedUpdate(){
