@@ -229,16 +229,23 @@ namespace HelloWorld {
 
 		void MoveCamera()
 		{
-			float interpolationRatio = (float)elapsedFrames/interpolationFramesCount;
+			if (isDead) {
+				float interpolationRatio = (float)elapsedFrames / interpolationFramesCount;
 
-			Vector3 localPosition = cameraFocus.GetComponent<HelloWorldPlayer>().transform.position;
-			Vector3 newPosition = new Vector3(localPosition.x, localPosition.y, -10);
+				Vector3 localPosition = cameraFocus.GetComponent<HelloWorldPlayer>().transform.position;
+				Vector3 newPosition = new Vector3(localPosition.x, localPosition.y, -10);
 
-			Vector3 interpolatedPosition = Vector3.Lerp(playerCamera.transform.position, newPosition, interpolationRatio);
-			elapsedFrames=(elapsedFrames+1)%(interpolationFramesCount+1);  // reset elapsedFrames to zero after it reached (interpolationFramesCount + 1)
+				Vector3 interpolatedPosition = Vector3.Lerp(playerCamera.transform.position, newPosition, interpolationRatio);
+				elapsedFrames = (elapsedFrames + 1) % (interpolationFramesCount + 1);  // reset elapsedFrames to zero after it reached (interpolationFramesCount + 1)
 
 
-			playerCamera.transform.position = interpolatedPosition;
+				playerCamera.transform.position = interpolatedPosition;
+			}
+			else
+			{
+				Vector3 serverPosition = cameraFocus.GetComponent<HelloWorldPlayer>().transform.position;
+				playerCamera.transform.position = new Vector3(serverPosition.x, serverPosition.y, -10);
+			}
 		}
 
 		void ChangeCameraFocus(GameObject focus)
