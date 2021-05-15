@@ -1,4 +1,3 @@
-
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
@@ -39,6 +38,11 @@ namespace HelloWorld {
 			ReadPermission=NetworkVariablePermission.Everyone
 		});
 
+    public NetworkVariableInt HP = new NetworkVariableInt(new NetworkVariableSettings {
+        WritePermission = NetworkVariablePermission.ServerOnly,
+        ReadPermission = NetworkVariablePermission.Everyone
+    });
+
 		private void OnEnable() {
 			PlayerName.OnValueChanged+=DisplayNames;
 			DontDestroyOnLoad(this.gameObject);
@@ -50,6 +54,7 @@ namespace HelloWorld {
 
 		public override void NetworkStart() {
 			Move();
+      InitializeHPServerRpc(20);
 		}
 
 		public void Move() {
@@ -89,47 +94,59 @@ namespace HelloWorld {
 			AttackDir.Value=a;
 			NAttacks.Value++;
 		}
+
+    [ServerRpc]
+    void InitializeHPServerRpc(int InitialHP, ServerRpcParams rpcParams = default)
+    {
+        HP.Value = InitialHP;
+    }
+
+    [ServerRpc]
+    void UpdateHPServerRpc(int HPDiff, ServerRpcParams rpcParams = default)
+    {
+        HP.Value += HPDiff;
+    }
 		
 		void generateAttack(){
 			// Generates an attack in direction AttackDir
 			// todo
 			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
-			
+			bullet.transform.parent = transform;
 		}
 
-        Vector2 getMovementVector(float val)
-        {
-            Vector2 dir = new Vector2(0, 0);
-            if (Input.GetKey("s")) dir += new Vector2(0, -1);
-            if (Input.GetKey("w")) dir += new Vector2(0, 1);
-            if (Input.GetKey("a")) dir += new Vector2(-1, 0);
-            if (Input.GetKey("d")) dir += new Vector2(1, 0);
-            dir.Normalize();
-            return dir * val;
-        }
+    Vector2 getMovementVector(float val)
+    {
+        Vector2 dir = new Vector2(0, 0);
+        if (Input.GetKey("s")) dir += new Vector2(0, -1);
+        if (Input.GetKey("w")) dir += new Vector2(0, 1);
+        if (Input.GetKey("a")) dir += new Vector2(-1, 0);
+        if (Input.GetKey("d")) dir += new Vector2(1, 0);
+        dir.Normalize();
+        return dir * val;
+    }
 
-        Vector2 getAttackVector()
-        {
-            adir = new Vector2(0, 0);
-            if (Input.GetKey("down")) adir += new Vector2(0, -1);
-            if (Input.GetKey("up")) adir += new Vector2(0, 1);
-            if (Input.GetKey("left")) adir += new Vector2(-1, 0);
-            if (Input.GetKey("right")) adir += new Vector2(1, 0);
-            return adir;
-        }
+    Vector2 getAttackVector()
+    {
+        adir = new Vector2(0, 0);
+        if (Input.GetKey("down")) adir += new Vector2(0, -1);
+        if (Input.GetKey("up")) adir += new Vector2(0, 1);
+        if (Input.GetKey("left")) adir += new Vector2(-1, 0);
+        if (Input.GetKey("right")) adir += new Vector2(1, 0);
+        return adir;
+    }
 
-        void MoveCamera()
-        {
-            Vector3 serverPosition = Position.Value;
-            Vector3 possibleFuturePosition = new Vector3(serverPosition.x, serverPosition.y, -10);
-            if (Vector3.Distance(playerCamera.transform.position, possibleFuturePosition) > 0.05)
-                playerCamera.transform.position = possibleFuturePosition;
-        }
+    void MoveCamera()
+    {
+        Vector3 serverPosition = Position.Value;
+        Vector3 possibleFuturePosition = new Vector3(serverPosition.x, serverPosition.y, -10);
+        if (Vector3.Distance(playerCamera.transform.position, possibleFuturePosition) > 0.05)
+            playerCamera.transform.position = possibleFuturePosition;
+    }
 
-        void Start()
-        {
-            playerCamera = CameraController.instance;
-        }
+    void Start()
+    {
+        playerCamera = CameraController.instance;
+    }
 
 		void Update() {
 			while(nattacks < NAttacks.Value){
@@ -139,17 +156,26 @@ namespace HelloWorld {
 			if (IsLocalPlayer) {
 				Timer += Time.deltaTime;
 
-                dir = getMovementVector(speed * Time.deltaTime);
-                adir = getAttackVector();
+        dir = getMovementVector(speed * Time.deltaTime);
+        adir = getAttackVector();
 
-                Move();
+        Move();
 				Attack();
 
-                MoveCamera();
+         MoveCamera();
 
 			} else {
 				transform.position=Position.Value;
 			}
 		}
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+      // If the Player has collided with a bullet that isn't theirs, and the Player is the local one
+      // Then reduce the Player's health
+      if (other.gameObject.tag == "Bullet" && other.gameObject.transform.parent != transform && IsLocalPlayer) {
+        UpdateHPServerRpc(-1);
+      }
+    }
 	}
 }
