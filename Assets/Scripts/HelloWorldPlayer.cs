@@ -33,7 +33,13 @@ namespace HelloWorld {
 			ReadPermission=NetworkVariablePermission.Everyone
 		});
 
-		public override void NetworkStart() {
+        public NetworkVariableInt HP = new NetworkVariableInt(new NetworkVariableSettings
+        {
+            WritePermission = NetworkVariablePermission.ServerOnly,
+            ReadPermission = NetworkVariablePermission.Everyone
+        });
+
+        public override void NetworkStart() {
 			Move();
 		}
 
@@ -67,7 +73,8 @@ namespace HelloWorld {
 			// Generates an attack in direction AttackDir
 			// todo
 			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
-			
+            bullet.transform.parent = transform;
+            Debug.Log(bullet.transform.parent);
 		}
 
         Vector2 getMovementVector(float val)
@@ -105,8 +112,9 @@ namespace HelloWorld {
         }
 
 		void Update() {
-			while(nattacks < NAttacks.Value){
-				++nattacks;
+			while(nattacks < NAttacks.Value)
+            {
+                ++nattacks;
 				generateAttack();
 			}
 			if (IsLocalPlayer) {
@@ -123,6 +131,17 @@ namespace HelloWorld {
 			} else {
 				transform.position=Position.Value;
 			}
-		}
-	}
+        }
+
+        void OnTriggerEnter2D(Collider2D other)
+        {
+            // If the Player has collided with a bullet that isn't theirs, and the Player is the local one
+            // Then reduce the Player's health
+            if (other.gameObject.tag == "Bullet" && other.gameObject.transform.parent != transform && IsLocalPlayer) {
+                // TODO: Reduce the Player's health
+            }
+            //if (collision.gameObject.tag == "Bullet" /*&& collision.gameObject.transform.parent != transform*/)
+            //GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 1f);
+        }
+    }
 }
