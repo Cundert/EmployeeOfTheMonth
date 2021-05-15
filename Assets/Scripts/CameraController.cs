@@ -7,11 +7,12 @@ public class CameraController : MonoBehaviour
 
     public static CameraController instance;
 
-    void Start()
+	void Start()
     {
         if (CameraController.instance) Destroy(gameObject);
         else CameraController.instance = this;
-    }
+		DontDestroyOnLoad(this.gameObject);
+	}
 
     // Update is called once per frame
     void Update()
