@@ -24,7 +24,7 @@ namespace HelloWorld {
 		[HideInInspector]
 		public float speed; // Speed of the player
 		[HideInInspector]
-		public int damage; // Damage that the player does per bullet
+		public int damage = 10; // Damage that the player does per bullet
 		[HideInInspector]
 		public int maxHp;
 
@@ -94,7 +94,7 @@ namespace HelloWorld {
 			attackDelay=0.75f;
 			speed=3.0f;
 			maxHp=10;
-			damage=1;
+			damage=10;
 		}
 
 		private void OnDisable()
@@ -150,7 +150,7 @@ namespace HelloWorld {
 		}
 
 		[ServerRpc]
-		public void SetPlayerDamageDelayServerRpc(int dmg, ServerRpcParams rpcParams = default) {
+		public void SetPlayerDamageServerRpc(int dmg, ServerRpcParams rpcParams = default) {
 			variableDamage.Value=dmg;
 		}
 
@@ -192,6 +192,7 @@ namespace HelloWorld {
 			// todo
 			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
 			bullet.GetComponent<BulletScript>().source = gameObject;
+			Debug.Log(damage);
 			bullet.GetComponent<BulletScript>().BulletDamage=damage;
 		}
 
@@ -444,7 +445,7 @@ namespace HelloWorld {
 					// Subir stats de local a server
 					SetPlayerSpeedServerRpc(speed);
 					SetPlayerAttackDelayServerRpc(attackDelay);
-					SetPlayerDamageDelayServerRpc(damage);
+					SetPlayerDamageServerRpc(damage);
 					// La bajada de stats de server a local se hace en update para evitar problemas de sincronizacion
 				}
 				other.GetComponent<PickableObject>().DestroyItem();
