@@ -363,6 +363,7 @@ namespace HelloWorld {
 
 		void Update()
 		{
+			
 			if (!isDead && HPHasBeenSet.Value && HP.Value == 0)
 				Die();
 			while (!isDead && nattacks < NAttacks.Value)
