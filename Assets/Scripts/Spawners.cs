@@ -40,10 +40,10 @@ public class Spawners : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-		if(NetworkManager.Singleton.ServerClientId == NetworkManager.Singleton.LocalClientId)
+		//if(NetworkManager.Singleton.ServerClientId == NetworkManager.Singleton.LocalClientId)
 			ShuffleSpawnsServerRpc();
-		else
-			IAmReadyServerRpc();
+		//else
+		//	IAmReadyServerRpc();
 
 		if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient)) {
 			var player = networkedClient.PlayerObject.GetComponent<HelloWorldPlayer>();
