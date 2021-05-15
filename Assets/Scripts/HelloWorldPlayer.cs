@@ -21,7 +21,9 @@ namespace HelloWorld {
 	  
 		public Vector2 dir, adir;
 		public int nattacks;
-		public float speed;
+		[HideInInspector]
+		public float speed; // Speed of the player
+		public int maxHp;
 
 		public CameraController playerCamera;
 		public GameObject cameraFocus;
@@ -29,7 +31,9 @@ namespace HelloWorld {
 
 		public List<HelloWorldPlayer> kills = new List<HelloWorldPlayer>();
 
-		public float attackDelay = 0.2f;
+		[HideInInspector]
+		public float attackDelay; // Delay between attacks
+
 		public float lastAttack = 0.0f;
 		public float Timer = 0.0f;
 
@@ -37,6 +41,11 @@ namespace HelloWorld {
 
 		public int amountOfObstacleCollisions = 0;
 		public bool isDead;
+
+		// Variable stats
+		public NetworkVariableFloat variableSpeed = new NetworkVariableFloat();
+		public NetworkVariableFloat variableAttackDelay = new NetworkVariableFloat();
+
 
 		public NetworkVariableString PlayerName = new NetworkVariableString(new NetworkVariableSettings
 		{
@@ -78,6 +87,9 @@ namespace HelloWorld {
 		{
 			PlayerName.OnValueChanged += DisplayNames;
 			DontDestroyOnLoad(this.gameObject);
+			attackDelay=0.75f;
+			speed=3.0f;
+			maxHp=10;
 		}
 
 		private void OnDisable()
@@ -88,9 +100,15 @@ namespace HelloWorld {
 		public override void NetworkStart()
 		{
 			Move();
-			InitializeHPServerRpc(20);
+			InitializeHPServerRpc(maxHp);
 		}
 
+    public void SetPosition(Vector3 pos) {
+			if (!IsLocalPlayer) return;
+			transform.position=pos;
+			UpdatePositionServerRpc(transform.position);
+		}
+    
 		public void Move()
 		{
 			if (!IsLocalPlayer) return;
@@ -114,6 +132,16 @@ namespace HelloWorld {
 			{
 				transform.GetChild(0).gameObject.GetComponent<TextMesh>().text = after;
 			}
+		}
+
+		[ServerRpc]
+		public void SetPlayerSpeedServerRpc(float speed, ServerRpcParams rpcParams = default) {
+			variableSpeed.Value=speed;
+		}
+
+		[ServerRpc]
+		public void SetPlayerAttackDelayServerRpc(float delay, ServerRpcParams rpcParams = default) {
+			variableAttackDelay.Value=delay;
 		}
 
 		[ServerRpc]
@@ -170,7 +198,7 @@ namespace HelloWorld {
 					GetComponent<CircleCollider2D>().radius,
 					new Vector3(dir.x, 0, 0),
 					val,
-					LayerMask.GetMask("TestObstacle")
+					LayerMask.GetMask("Wall")
 				).collider != null)
 				dir.x = 0;
 			if (Physics2D.CircleCast(
@@ -178,7 +206,7 @@ namespace HelloWorld {
 					GetComponent<CircleCollider2D>().radius,
 					new Vector3(0, dir.y, 0),
 					val,
-					LayerMask.GetMask("TestObstacle")
+					LayerMask.GetMask("Wall")
 				).collider != null)
 				dir.y = 0;
 
@@ -196,12 +224,21 @@ namespace HelloWorld {
 			return adir;
 		}
 
+		public int interpolationFramesCount = 45; // Number of frames to completely interpolate between the 2 positions
+		int elapsedFrames = 0;
+
 		void MoveCamera()
 		{
-			Vector3 serverPosition = cameraFocus.GetComponent<HelloWorldPlayer>().Position.Value;
-			Vector3 possibleFuturePosition = new Vector3(serverPosition.x, serverPosition.y, -10);
-			if (Vector3.Distance(playerCamera.transform.position, possibleFuturePosition) > 0.04)
-				playerCamera.transform.position = possibleFuturePosition;
+			float interpolationRatio = (float)elapsedFrames/interpolationFramesCount;
+
+			Vector3 localPosition = cameraFocus.GetComponent<HelloWorldPlayer>().transform.position;
+			Vector3 newPosition = new Vector3(localPosition.x, localPosition.y, -10);
+
+			Vector3 interpolatedPosition = Vector3.Lerp(playerCamera.transform.position, newPosition, interpolationRatio);
+			elapsedFrames=(elapsedFrames+1)%(interpolationFramesCount+1);  // reset elapsedFrames to zero after it reached (interpolationFramesCount + 1)
+
+
+			playerCamera.transform.position = interpolatedPosition;
 		}
 
 		void ChangeCameraFocus(GameObject focus)
@@ -319,8 +356,8 @@ namespace HelloWorld {
 			isDead = false;
 			playerCamera = CameraController.instance;
 			cameraFocus = gameObject;
+      HelloWorldManager.players.Add(this);
 		}
-
 
 		void Update()
 		{
@@ -345,27 +382,13 @@ namespace HelloWorld {
 					Attack();
 				}
 				MoveCamera();
-
-
-
-				if (IsLocalPlayer)
-				{
-					if (!isDead)
-					{
-						Timer += Time.deltaTime;
-
-						dir = getMovementVector(speed * Time.deltaTime);
-						adir = getAttackVector();
-
-						Move();
-						Attack();
-					}
-					MoveCamera();
-
-				}
-				else
-				{
-					if (!isDead) transform.position = Position.Value;
+			}
+			else
+			{
+				if (!isDead) {
+					transform.position=Position.Value;
+					speed=variableSpeed.Value;
+					attackDelay=variableAttackDelay.Value;
 				}
 			}
 			Graphics.DrawMesh(FanVision, (new Vector3(transform.position.x, -transform.position.y, -transform.position.z)) - new Vector3(0,0,15), Quaternion.Euler(0, 180, 0), material, 0);
@@ -386,7 +409,16 @@ namespace HelloWorld {
 				lastAttacker = other.GetComponent<BulletScript>().source;
 				if (IsLocalPlayer) UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage * -1);
 			}
+
+			if (!isDead && other.gameObject.tag=="Item") {
+				if (IsLocalPlayer) {
+					other.GetComponent<PickableObject>().PickItem(this);
+					// Subir stats de local a server
+					SetPlayerSpeedServerRpc(speed);
+					SetPlayerAttackDelayServerRpc(attackDelay);
+					// La bajada de stats de server a local se hace en update para evitar problemas de sincronizacion
+				}
+			}
 		}
 	}
 }
-
