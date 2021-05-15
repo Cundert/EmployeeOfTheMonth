@@ -5,11 +5,13 @@ using UnityEngine.SceneManagement;
 using MLAPI.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
+using MLAPI.Transports.UNET;
 
 namespace HelloWorld {
 	public class HelloWorldManager : MonoBehaviour {
 
 		string playerName="Name";
+		string ip= "25.66.212.232";
 
 		public static List<HelloWorldPlayer> players = new List<HelloWorldPlayer>();
 
@@ -22,6 +24,7 @@ namespace HelloWorld {
 			if (!NetworkManager.Singleton.IsClient&&!NetworkManager.Singleton.IsServer) {
 				StartButtons();
 				playerName=GUILayout.TextField(playerName, 10);
+				ip=GUILayout.TextField(ip, 20);
 			} else if (SceneManager.GetActiveScene().name=="ConnectScene") {
 				StatusLabels();
 				ShowName(playerName);
@@ -35,7 +38,10 @@ namespace HelloWorld {
 
 		void StartButtons() {
 			if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
-			if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
+			if (GUILayout.Button("Client")) {
+				NetworkManager.Singleton.GetComponent<UNetTransport>().ConnectAddress=ip;
+				NetworkManager.Singleton.StartClient();
+			}
 			if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
 		}
 
