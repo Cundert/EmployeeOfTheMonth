@@ -23,6 +23,9 @@ namespace HelloWorld {
 		public int nattacks;
 		[HideInInspector]
 		public float speed; // Speed of the player
+		[HideInInspector]
+		public int damage; // Damage that the player does per bullet
+		[HideInInspector]
 		public int maxHp;
 
 		public CameraController playerCamera;
@@ -45,6 +48,7 @@ namespace HelloWorld {
 		// Variable stats
 		public NetworkVariableFloat variableSpeed = new NetworkVariableFloat();
 		public NetworkVariableFloat variableAttackDelay = new NetworkVariableFloat();
+		public NetworkVariableInt variableDamage = new NetworkVariableInt();
 
 
 		public NetworkVariableString PlayerName = new NetworkVariableString(new NetworkVariableSettings
@@ -90,6 +94,7 @@ namespace HelloWorld {
 			attackDelay=0.75f;
 			speed=3.0f;
 			maxHp=10;
+			damage=1;
 		}
 
 		private void OnDisable()
@@ -145,6 +150,11 @@ namespace HelloWorld {
 		}
 
 		[ServerRpc]
+		public void SetPlayerDamageServerRpc(int dmg, ServerRpcParams rpcParams = default) {
+			variableDamage.Value=dmg;
+		}
+
+		[ServerRpc]
 		public void SetPlayerNameServerRpc(string name, ServerRpcParams rpcParams = default)
 		{
 			PlayerName.Value = name;
@@ -182,6 +192,8 @@ namespace HelloWorld {
 			// todo
 			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
 			bullet.GetComponent<BulletScript>().source = gameObject;
+			Debug.Log(damage);
+			bullet.GetComponent<BulletScript>().BulletDamage=damage;
 		}
 
 
@@ -229,16 +241,23 @@ namespace HelloWorld {
 
 		void MoveCamera()
 		{
-			float interpolationRatio = (float)elapsedFrames/interpolationFramesCount;
+			if (isDead) {
+				float interpolationRatio = (float)elapsedFrames / interpolationFramesCount;
 
-			Vector3 localPosition = cameraFocus.GetComponent<HelloWorldPlayer>().transform.position;
-			Vector3 newPosition = new Vector3(localPosition.x, localPosition.y, -10);
+				Vector3 localPosition = cameraFocus.GetComponent<HelloWorldPlayer>().transform.position;
+				Vector3 newPosition = new Vector3(localPosition.x, localPosition.y, -10);
 
-			Vector3 interpolatedPosition = Vector3.Lerp(playerCamera.transform.position, newPosition, interpolationRatio);
-			elapsedFrames=(elapsedFrames+1)%(interpolationFramesCount+1);  // reset elapsedFrames to zero after it reached (interpolationFramesCount + 1)
+				Vector3 interpolatedPosition = Vector3.Lerp(playerCamera.transform.position, newPosition, interpolationRatio);
+				elapsedFrames = (elapsedFrames + 1) % (interpolationFramesCount + 1);  // reset elapsedFrames to zero after it reached (interpolationFramesCount + 1)
 
 
-			playerCamera.transform.position = interpolatedPosition;
+				playerCamera.transform.position = interpolatedPosition;
+			}
+			else
+			{
+				Vector3 serverPosition = cameraFocus.GetComponent<HelloWorldPlayer>().transform.position;
+				playerCamera.transform.position = new Vector3(serverPosition.x, serverPosition.y, -10);
+			}
 		}
 
 		void ChangeCameraFocus(GameObject focus)
@@ -253,6 +272,11 @@ namespace HelloWorld {
 				ded.ChangeCameraFocus(focus);
 				ded.UpdateMyKillsCamera(focus);
 			}
+		}
+
+		bool IsPlayerTheCameraFocus()
+		{
+			return gameObject == cameraFocus;
 		}
 
 		void Die()
@@ -272,7 +296,7 @@ namespace HelloWorld {
 		private double xp(Vector2 a, Vector2 b) { return a.x * b.y - a.y * b.x; }
 
 		void loadPoints(){
-			if (!IsLocalPlayer) return;
+			if (!IsPlayerTheCameraFocus()) return;
 			bool x = false;
 			if(gotFrom != MapScript.instance) {
 				points = new Vector2[MapScript.instance.points.Count + 1];
@@ -341,7 +365,7 @@ namespace HelloWorld {
 		
 		
 		void DrawRays(){
-			if (!IsLocalPlayer) return;
+			if (!IsPlayerTheCameraFocus()) return;
 			for(int i = 1; i < points.Length; ++i){
 				Vector2 v = ogpoints[i];
 				LayerMask mask = LayerMask.GetMask("BulletWall");
@@ -358,13 +382,12 @@ namespace HelloWorld {
 			isDead = false;
 			playerCamera = CameraController.instance;
 			cameraFocus = gameObject;
-      HelloWorldManager.players.Add(this);
+			HelloWorldManager.players.Add(this);
 		}
 
 		void Update()
 		{
-			
-			if (!isDead && HPHasBeenSet.Value && HP.Value == 0)
+			if (!isDead && HPHasBeenSet.Value && HP.Value <= 0)
 				Die();
 			while (!isDead && nattacks < NAttacks.Value)
 			{
@@ -383,6 +406,10 @@ namespace HelloWorld {
 
 					Move();
 					Attack();
+
+					SetPlayerSpeedServerRpc(speed);
+					SetPlayerAttackDelayServerRpc(attackDelay);
+					SetPlayerDamageServerRpc(damage);
 				}
 				MoveCamera();
 			}
@@ -392,6 +419,7 @@ namespace HelloWorld {
 					transform.position=Position.Value;
 					speed=variableSpeed.Value;
 					attackDelay=variableAttackDelay.Value;
+					damage=variableDamage.Value;
 				}
 			}
 			Graphics.DrawMesh(FanVision, (new Vector3(transform.position.x, -transform.position.y, -transform.position.z)) - new Vector3(0,0,15), Quaternion.Euler(0, 180, 0), material, 0);
@@ -410,7 +438,9 @@ namespace HelloWorld {
 			if (!isDead && other.gameObject.tag == "Bullet" && other.GetComponent<BulletScript>().source != gameObject)
 			{
 				lastAttacker = other.GetComponent<BulletScript>().source;
-				if (IsLocalPlayer) UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage * -1);
+				if (IsLocalPlayer) {
+					UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage*-1);
+				}
 			}
 
 			if (!isDead && other.gameObject.tag=="Item") {
@@ -419,8 +449,10 @@ namespace HelloWorld {
 					// Subir stats de local a server
 					SetPlayerSpeedServerRpc(speed);
 					SetPlayerAttackDelayServerRpc(attackDelay);
+					SetPlayerDamageServerRpc(damage);
 					// La bajada de stats de server a local se hace en update para evitar problemas de sincronizacion
 				}
+				other.GetComponent<PickableObject>().DestroyItem();
 			}
 		}
 	}
