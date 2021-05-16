@@ -405,6 +405,8 @@ MonoBehaviour:
     NetworkPrefabs:
     - Prefab: {fileID: 7227319422900188694, guid: 99629a714edb9414bbd258811a594e9d, type: 3}
       PlayerPrefab: 1
+    - Prefab: {fileID: 585233889992733658, guid: 2b36da41de7bef941bf30324e6f25983, type: 3}
+      PlayerPrefab: 1
     PlayerPrefabHash:
       id: 0
     CreatePlayerPrefab: 1
