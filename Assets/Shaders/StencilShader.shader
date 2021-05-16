@@ -6,7 +6,9 @@ Shader "Unlit/StencilShader"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+        Lighting Off Cull Back ZWrite Off Fog { Mode Off }
+		Blend SrcAlpha OneMinusSrcAlpha
         LOD 100
 
         Pass
@@ -74,7 +76,7 @@ Shader "Unlit/StencilShader"
                 
                 if(mask.r == 0 && z < 5) discard;
                 
-                return col * (mask.r * prop + 1 - prop);
+                return col * (mask.r * prop + 1 - prop) * float4(1,1,1,0) + float4(0,0,0,1);
             }
             ENDCG
         }
