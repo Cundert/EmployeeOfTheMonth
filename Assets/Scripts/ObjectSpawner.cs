@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectSpawner : MonoBehaviour
+public class ObjectSpawner : NetworkBehaviour
 {
 	public GameObject pickableObjectPrefab;
 	public int amountOfItems;
@@ -22,8 +22,8 @@ public class ObjectSpawner : MonoBehaviour
 	void SpawnSingleItem(int id, Vector3 position)
 	{
 		GameObject newPickableObject = Instantiate(pickableObjectPrefab, position, Quaternion.identity);
-		newPickableObject.GetComponent<NetworkObject>().Spawn();
 		newPickableObject.GetComponent<PickableObject>().ChangeItemServerRpc(id);
+		newPickableObject.GetComponent<NetworkObject>().Spawn();
 	}
 
 	void SpawnItemBatch()
