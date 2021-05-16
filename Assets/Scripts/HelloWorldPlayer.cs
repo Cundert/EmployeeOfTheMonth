@@ -1,4 +1,4 @@
-using MLAPI;
+Graphics.DrawMeshusing MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using UnityEngine;
@@ -439,6 +439,9 @@ namespace HelloWorld {
 					speed=variableSpeed.Value;
 					attackDelay=variableAttackDelay.Value;
 					damage=variableDamage.Value;
+					
+					Transform Health = transform.GetChild(1);
+					if(Health != null) Health.gameObject.SetActive(false);
 				}
 			}
 			Graphics.DrawMesh(FanVision, (new Vector3(transform.position.x, -transform.position.y, -transform.position.z)) - new Vector3(0,0,15), Quaternion.Euler(0, 180, 0), material, 0);
