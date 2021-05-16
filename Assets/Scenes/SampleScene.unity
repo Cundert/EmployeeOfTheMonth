@@ -3608,8 +3608,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickableObjectPrefab: {fileID: 585233889992733658, guid: 2b36da41de7bef941bf30324e6f25983, type: 3}
   completeItemList:
+  - {fileID: 11400000, guid: be8af8d82b636c84aa9f52b2378a46f7, type: 2}
+  - {fileID: 11400000, guid: fff0aa19836d32e4487d8c56e2fc5be6, type: 2}
+  - {fileID: 11400000, guid: 30c68294b9a658f48b653f03cf3791e3, type: 2}
   - {fileID: 11400000, guid: b0ed767011007eb419db8a1889708745, type: 2}
-  - {fileID: 11400000, guid: a7fad7a6f861f5d49a1003186bbd8449, type: 2}
+  - {fileID: 11400000, guid: 2772dd59a76ba224ca6b90c65348e131, type: 2}
+  - {fileID: 11400000, guid: 06ab64738b27c4848809cc880c280a5f, type: 2}
   timeSinceLastSpawn: 0
   spawnRate: 15
 --- !u!4 &1898662358
