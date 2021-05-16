@@ -38,7 +38,7 @@ namespace HelloWorld {
 		public float attackDelay; // Delay between attacks
 
 		public float InvulnerabilityTime = 2.0f;
-		private NetworkVariableFloat LastInvuln = new NetworkVariableFloat();
+		public NetworkVariableFloat LastInvuln = new NetworkVariableFloat();
 		private float lastAttack = 0.0f;
 		public NetworkVariableFloat Timer = new NetworkVariableFloat(new NetworkVariableSettings
 		{
@@ -300,6 +300,7 @@ namespace HelloWorld {
 				ChangeCameraFocus(lastAttacker);
 			}
 			UpdateMyKillsCamera(lastAttacker);
+			lastAttacker.InvulnerabilityBuffServerRpc();
 			lastAttacker.GetComponent<HelloWorldPlayer>().kills.Add(this);
 			gameObject.layer = 6;
 			GetComponent<SpriteRenderer>().enabled = false;
