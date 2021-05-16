@@ -4,6 +4,7 @@ using MLAPI.NetworkVariable;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 
@@ -292,6 +293,8 @@ namespace HelloWorld {
 			gameObject.layer = 6;
 			GetComponent<SpriteRenderer>().enabled = false;
 			transform.GetChild(0).GetComponent<MeshRenderer>().enabled = false;
+			transform.GetChild(1).transform.GetChild(0).GetComponent<Image>().enabled = false;
+			transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().enabled = false;
 			isDead = true;
 		}
 
@@ -385,6 +388,7 @@ namespace HelloWorld {
 			playerCamera = CameraController.instance;
 			cameraFocus = gameObject;
 			HelloWorldManager.players.Add(this);
+			transform.GetChild(1).gameObject.GetComponent<Canvas>().worldCamera = playerCamera.gameObject.GetComponent<Camera>();
 		}
 
 		void Update()
