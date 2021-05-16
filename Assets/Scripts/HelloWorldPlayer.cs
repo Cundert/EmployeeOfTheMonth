@@ -184,19 +184,21 @@ namespace HelloWorld {
 		}
 
 		[ServerRpc]
-		void UpdateHPServerRpc(int HPDiff, ServerRpcParams rpcParams = default)
+		public void UpdateHPServerRpc(int HPDiff, ServerRpcParams rpcParams = default)
 		{
 			HP.Value += HPDiff;
+			if (HP.Value>maxHp) HP.Value=maxHp;
 		}
 
 		void generateAttack()
 		{
 			// Generates an attack in direction AttackDir
 			// todo
-			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
-			bullet.GetComponent<BulletScript>().source = gameObject;
-			Debug.Log(damage);
-			bullet.GetComponent<BulletScript>().BulletDamage=damage;
+			if (SceneManager.GetActiveScene().name=="SampleScene") {
+				GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
+				bullet.GetComponent<BulletScript>().source=gameObject;
+				bullet.GetComponent<BulletScript>().BulletDamage=damage;
+			}
 		}
 
 
@@ -292,6 +294,7 @@ namespace HelloWorld {
 			}
 			UpdateMyKillsCamera(lastAttacker);
 			lastAttacker.GetComponent<HelloWorldPlayer>().kills.Add(this);
+			lastAttacker.GetComponent<HelloWorldPlayer>().UpdateHPServerRpc(3);
 			gameObject.layer = 6;
 			GetComponent<SpriteRenderer>().enabled = false;
 			transform.GetChild(0).GetComponent<MeshRenderer>().enabled = false;
@@ -392,7 +395,6 @@ namespace HelloWorld {
 			cameraFocus = gameObject;
 			HelloWorldManager.players.Add(this);
 			transform.GetChild(1).gameObject.GetComponent<Canvas>().worldCamera = playerCamera.gameObject.GetComponent<Camera>();
-
 		}
 
 		void Update()

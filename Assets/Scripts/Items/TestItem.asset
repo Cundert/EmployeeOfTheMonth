@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7daac3391f25b1e4494658d45c6ee42c, type: 3}
-  m_Name: Grapadora
+  m_Name: TestItem
   m_EditorClassIdentifier: 
-  image: {fileID: 21300000, guid: 53af24f12ad661043bec72ce8102359e, type: 3}
-  speedBonus: 0
-  attackDelayReducement: 0
-  damage: 1
+  image: {fileID: 21300000, guid: 58e005e717a4bc443b0cc1101bf3cf84, type: 3}
+  speedBonus: 1.5
+  attackDelayReducement: 0.4
+  damage: 10
   hpHeal: 0

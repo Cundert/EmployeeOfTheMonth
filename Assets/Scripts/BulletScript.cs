@@ -18,7 +18,6 @@ public class BulletScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		Debug.Log("Bullet damage: "+BulletDamage);
 		BulletAliveTime += Time.deltaTime;
 		if(BulletAliveTime > BulletMaxTime) Destroy(gameObject);
 		
