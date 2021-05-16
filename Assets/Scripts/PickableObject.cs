@@ -1,4 +1,5 @@
 using HelloWorld;
+using MLAPI.Messaging;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,11 @@ public class PickableObject : MonoBehaviour
 
 	public void PickItem(HelloWorldPlayer player) {
 		item.ChangeStats(player);
+	}
+
+	[ClientRpc]
+	public void ChangeItemClientRpc(EquipableItem it) {
+		item=it;
 	}
 
 	public void Start() {

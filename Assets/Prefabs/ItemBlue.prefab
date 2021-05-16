@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 585233889992733662}
   - component: {fileID: 793544285326132089}
   m_Layer: 10
-  m_Name: Item
+  m_Name: ItemBlue
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -137,7 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7d13217888eab84e90dca183eb06ff4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: a7fad7a6f861f5d49a1003186bbd8449, type: 2}
+  item: {fileID: 11400000, guid: be8af8d82b636c84aa9f52b2378a46f7, type: 2}
 --- !u!114 &793544285326132089
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,8 +7,7 @@ using UnityEngine;
 
 public class ObjectSpawner : MonoBehaviour
 {
-	public GameObject pickableObjectPrefab;
-	public EquipableItem[] completeItemList;
+	public GameObject[] pickableObjectPrefabList;
 
 	public float timeSinceLastSpawn = 0;
 	public float spawnRate = 15;
@@ -19,11 +18,9 @@ public class ObjectSpawner : MonoBehaviour
 
     }
 
-	void SpawnSingleItem(EquipableItem itemScript, Vector3 position)
+	void SpawnSingleItem(GameObject itemPrefab, Vector3 position)
 	{
-		GameObject newPickableObject = Instantiate(pickableObjectPrefab, position, Quaternion.identity);
-		newPickableObject.GetComponent<PickableObject>().item = itemScript;
-		newPickableObject.AddComponent<NetworkObject>();
+		GameObject newPickableObject = Instantiate(itemPrefab, position, Quaternion.identity);
 		newPickableObject.GetComponent<NetworkObject>().Spawn();
 	}
 
@@ -32,7 +29,7 @@ public class ObjectSpawner : MonoBehaviour
 		List<int> chosenColumns = new List<int>();
 		for(int i = 0; i < 3; i++)
 		{
-			int itemIndex = Random.Range(0, completeItemList.Length);
+			int itemIndex = Random.Range(0, pickableObjectPrefabList.Length);
 
 			int selectedColumn = Random.Range(0, 4);
 			while (chosenColumns.Contains(selectedColumn))
@@ -40,7 +37,7 @@ public class ObjectSpawner : MonoBehaviour
 			chosenColumns.Add(selectedColumn);
 
 			GameObject selectedSpawnPoint = transform.Find(string.Format("SpawnPoints/{0}-{1}", i + 1, selectedColumn + 1)).gameObject;
-			SpawnSingleItem(completeItemList[itemIndex], selectedSpawnPoint.transform.position);
+			SpawnSingleItem(pickableObjectPrefabList[itemIndex], selectedSpawnPoint.transform.position);
 		}
 
 	}
