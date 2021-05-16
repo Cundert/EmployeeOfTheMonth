@@ -40,7 +40,11 @@ namespace HelloWorld {
 		public float InvulnerabilityTime = 2.0f;
 		private NetworkVariableFloat LastInvuln = new NetworkVariableFloat();
 		private float lastAttack = 0.0f;
-		private float Timer = 0.0f;
+		public NetworkVariableFloat Timer = new NetworkVariableFloat(new NetworkVariableSettings
+		{
+			WritePermission = NetworkVariablePermission.Everyone,
+			ReadPermission = NetworkVariablePermission.Everyone
+		});
 
 		public GameObject AttackObject;
 
@@ -127,8 +131,8 @@ namespace HelloWorld {
 		{
 			if (!IsLocalPlayer) return;
 			if (adir.x == 0 && adir.y == 0) return;
-			if (lastAttack + attackDelay > Timer) return;
-			lastAttack = Timer;
+			if (lastAttack + attackDelay > Timer.Value) return;
+			lastAttack = Timer.Value;
 			UpdateAttackServerRpc(adir);
 		}
 
@@ -190,7 +194,7 @@ namespace HelloWorld {
 		
 		[ServerRpc]
 		void InvulnerabilityBuffServerRpc(ServerRpcParams rpcParams = default){
-			LastInvuln.Value = Timer;
+			LastInvuln.Value = Timer.Value;
 		}
 
 		void generateAttack()
@@ -410,7 +414,7 @@ namespace HelloWorld {
 			{
 				if (!isDead)
 				{
-					Timer += Time.deltaTime;
+					Timer.Value += Time.deltaTime;
 
 					dir = getMovementVector(speed * Time.deltaTime);
 					adir = getAttackVector();
@@ -435,7 +439,7 @@ namespace HelloWorld {
 			}
 			Graphics.DrawMesh(FanVision, (new Vector3(transform.position.x, -transform.position.y, -transform.position.z)) - new Vector3(0,0,15), Quaternion.Euler(0, 180, 0), material, 0);
 
-			if(Timer - LastInvuln.Value < InvulnerabilityTime) {
+			if(Timer.Value - LastInvuln.Value < InvulnerabilityTime) {
 				Color tmp = GetComponent<SpriteRenderer>().color;
 				tmp.a = 0.5f;
 				GetComponent<SpriteRenderer>().color = tmp;
@@ -459,7 +463,7 @@ namespace HelloWorld {
 			if (!isDead && other.gameObject.tag == "Bullet" && other.GetComponent<BulletScript>().source != gameObject)
 			{
 				lastAttacker = other.GetComponent<BulletScript>().source;
-				if (IsLocalPlayer && Timer - LastInvuln.Value >= InvulnerabilityTime) {
+				if (IsLocalPlayer && Timer.Value - LastInvuln.Value >= InvulnerabilityTime) {
 					UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage*-1);
 				}
 			}
