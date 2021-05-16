@@ -3606,13 +3606,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 537207b004505bd4795ec0699abcf990, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pickableObjectPrefabList:
-  - {fileID: 585233889992733658, guid: 2b36da41de7bef941bf30324e6f25983, type: 3}
-  - {fileID: 585233889992733658, guid: f3e43f240210b4e48bb240fd08b83863, type: 3}
-  - {fileID: 585233889992733658, guid: 7e87b7dd245eab14eac3680078c2fe02, type: 3}
-  - {fileID: 585233889992733658, guid: c46bd30e534178748a235d22d7acfd75, type: 3}
-  - {fileID: 585233889992733658, guid: 54033688646c8d1479cd139f7f747fe0, type: 3}
-  - {fileID: 585233889992733658, guid: 62eff2fe32f51f640b6e4d0f257969f9, type: 3}
+  pickableObjectPrefab: {fileID: 585233889992733658, guid: 2b36da41de7bef941bf30324e6f25983, type: 3}
+  amountOfItems: 6
   timeSinceLastSpawn: 0
   spawnRate: 15
 --- !u!4 &1898662358

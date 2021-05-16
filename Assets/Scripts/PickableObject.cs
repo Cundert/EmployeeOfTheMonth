@@ -1,5 +1,6 @@
 using HelloWorld;
 using MLAPI.Messaging;
+using MLAPI.NetworkVariable;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,10 @@ using UnityEngine;
 public class PickableObject : MonoBehaviour
 {
 	public EquipableItem item;
+
+	public EquipableItem[] allItems;
+
+	public NetworkVariableInt itemId = new NetworkVariableInt();
 
 	public void DestroyItem() {
 		Destroy(gameObject);
@@ -16,12 +21,13 @@ public class PickableObject : MonoBehaviour
 		item.ChangeStats(player);
 	}
 
-	[ClientRpc]
-	public void ChangeItemClientRpc(EquipableItem it) {
-		item=it;
+	[ServerRpc]
+	public void ChangeItemServerRpc(int id) {
+		itemId.Value=id;
 	}
 
-	public void Start() {
+	public void Update() {
+		item=allItems[itemId.Value];
 		GetComponent<SpriteRenderer>().sprite=item.image;
 	}
 }
