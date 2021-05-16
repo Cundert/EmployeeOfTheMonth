@@ -182,9 +182,10 @@ namespace HelloWorld {
 		}
 
 		[ServerRpc]
-		void UpdateHPServerRpc(int HPDiff, ServerRpcParams rpcParams = default)
+		public void UpdateHPServerRpc(int HPDiff, ServerRpcParams rpcParams = default)
 		{
 			HP.Value += HPDiff;
+			if (HP.Value>maxHp) HP.Value=maxHp;
 		}
 
 		void generateAttack()
@@ -193,7 +194,6 @@ namespace HelloWorld {
 			// todo
 			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
 			bullet.GetComponent<BulletScript>().source = gameObject;
-			Debug.Log(damage);
 			bullet.GetComponent<BulletScript>().BulletDamage=damage;
 		}
 
