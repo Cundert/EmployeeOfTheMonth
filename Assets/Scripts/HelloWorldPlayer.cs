@@ -37,8 +37,10 @@ namespace HelloWorld {
 		[HideInInspector]
 		public float attackDelay; // Delay between attacks
 
-		public float lastAttack = 0.0f;
-		public float Timer = 0.0f;
+		public float InvulnerabilityTime = 2.0f;
+		private float LastInvuln = -10000000000.0f;
+		private float lastAttack = 0.0f;
+		private float Timer = 0.0f;
 
 		public GameObject AttackObject;
 
@@ -280,7 +282,11 @@ namespace HelloWorld {
 			HelloWorldPlayer playerObject = NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject.gameObject.GetComponent<HelloWorldPlayer>();	
 			return GameObject.ReferenceEquals(playerObject.cameraFocus, gameObject);
 		}
-
+		
+		void InvulnerabilityBuff(){
+			LastInvuln = Timer;
+		}
+		
 		void Die()
 		{
 			if (IsLocalPlayer)
@@ -426,6 +432,16 @@ namespace HelloWorld {
 				}
 			}
 			Graphics.DrawMesh(FanVision, (new Vector3(transform.position.x, -transform.position.y, -transform.position.z)) - new Vector3(0,0,15), Quaternion.Euler(0, 180, 0), material, 0);
+
+			if(Timer - LastInvuln < InvulnerabilityTime) {
+				Color tmp = GetComponent<SpriteRenderer>().color;
+				tmp.a = 0.5f;
+				GetComponent<SpriteRenderer>().color = tmp;
+			} else {
+				Color tmp = GetComponent<SpriteRenderer>().color;
+				tmp.a = 1f;
+				GetComponent<SpriteRenderer>().color = tmp;
+			}
 		}
 		
 		void FixedUpdate(){
@@ -441,7 +457,7 @@ namespace HelloWorld {
 			if (!isDead && other.gameObject.tag == "Bullet" && other.GetComponent<BulletScript>().source != gameObject)
 			{
 				lastAttacker = other.GetComponent<BulletScript>().source;
-				if (IsLocalPlayer) {
+				if (IsLocalPlayer && Timer - LastInvuln >= InvulnerabilityTime) {
 					UpdateHPServerRpc(other.GetComponent<BulletScript>().BulletDamage*-1);
 				}
 			}
