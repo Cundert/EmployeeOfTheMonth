@@ -46,6 +46,8 @@ namespace HelloWorld {
 		public int amountOfObstacleCollisions = 0;
 		public bool isDead;
 
+		public bool contactedWinnerScreen = false;
+
 		// Variable stats
 		public NetworkVariableFloat variableSpeed = new NetworkVariableFloat();
 		public NetworkVariableFloat variableAttackDelay = new NetworkVariableFloat();
@@ -296,6 +298,7 @@ namespace HelloWorld {
 			transform.GetChild(1).transform.GetChild(0).GetComponent<Image>().enabled = false;
 			transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().enabled = false;
 			isDead = true;
+			GameObject.Find("WinnerScreenCanvas/WinnerText").GetComponent<WinnerScreen>().AddDeadPlayer();
 		}
 
 		private double xp(Vector2 a, Vector2 b) { return a.x * b.y - a.y * b.x; }
@@ -389,10 +392,17 @@ namespace HelloWorld {
 			cameraFocus = gameObject;
 			HelloWorldManager.players.Add(this);
 			transform.GetChild(1).gameObject.GetComponent<Canvas>().worldCamera = playerCamera.gameObject.GetComponent<Camera>();
+
 		}
 
 		void Update()
 		{
+			if (!contactedWinnerScreen)
+				if (GameObject.Find("WinnerScreenCanvas/WinnerText") != null)
+				{
+					GameObject.Find("WinnerScreenCanvas/WinnerText").GetComponent<WinnerScreen>().AddAlivePlayer();
+					contactedWinnerScreen = true;
+				}
 
 			if (!isDead && HPHasBeenSet.Value && HP.Value <= 0)
 				Die();
