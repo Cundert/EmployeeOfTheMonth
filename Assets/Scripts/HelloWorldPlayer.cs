@@ -290,6 +290,7 @@ namespace HelloWorld {
 			}
 			UpdateMyKillsCamera(lastAttacker);
 			lastAttacker.GetComponent<HelloWorldPlayer>().kills.Add(this);
+			lastAttacker.GetComponent<HelloWorldPlayer>().UpdateHPServerRpc(3);
 			gameObject.layer = 6;
 			GetComponent<SpriteRenderer>().enabled = false;
 			transform.GetChild(0).GetComponent<MeshRenderer>().enabled = false;
