@@ -192,9 +192,11 @@ namespace HelloWorld {
 		{
 			// Generates an attack in direction AttackDir
 			// todo
-			GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
-			bullet.GetComponent<BulletScript>().source = gameObject;
-			bullet.GetComponent<BulletScript>().BulletDamage=damage;
+			if (SceneManager.GetActiveScene().name=="SampleScene") {
+				GameObject bullet = Instantiate(AttackObject, transform.position, Quaternion.FromToRotation(new Vector3(1, 0, 0), AttackDir.Value));
+				bullet.GetComponent<BulletScript>().source=gameObject;
+				bullet.GetComponent<BulletScript>().BulletDamage=damage;
+			}
 		}
 
 
