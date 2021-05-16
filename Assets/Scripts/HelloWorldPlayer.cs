@@ -196,6 +196,10 @@ namespace HelloWorld {
 		void InvulnerabilityBuffServerRpc(ServerRpcParams rpcParams = default){
 			LastInvuln.Value = Timer.Value;
 		}
+		
+		public void buffMyself(){
+			InvulnerabilityBuffServerRpc();
+		}
 
 		void generateAttack()
 		{
@@ -300,7 +304,7 @@ namespace HelloWorld {
 				ChangeCameraFocus(lastAttacker);
 			}
 			UpdateMyKillsCamera(lastAttacker);
-			lastAttacker.InvulnerabilityBuffServerRpc();
+			lastAttacker.GetComponent<HelloWorldPlayer>().buffMyself();
 			lastAttacker.GetComponent<HelloWorldPlayer>().kills.Add(this);
 			gameObject.layer = 6;
 			GetComponent<SpriteRenderer>().enabled = false;
