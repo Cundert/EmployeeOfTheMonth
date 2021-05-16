@@ -182,9 +182,10 @@ namespace HelloWorld {
 		}
 
 		[ServerRpc]
-		void UpdateHPServerRpc(int HPDiff, ServerRpcParams rpcParams = default)
+		public void UpdateHPServerRpc(int HPDiff, ServerRpcParams rpcParams = default)
 		{
 			HP.Value += HPDiff;
+			if (HP.Value>maxHp) HP.Value=maxHp;
 		}
 
 		void generateAttack()
@@ -291,6 +292,7 @@ namespace HelloWorld {
 			}
 			UpdateMyKillsCamera(lastAttacker);
 			lastAttacker.GetComponent<HelloWorldPlayer>().kills.Add(this);
+			lastAttacker.GetComponent<HelloWorldPlayer>().UpdateHPServerRpc(3);
 			gameObject.layer = 6;
 			GetComponent<SpriteRenderer>().enabled = false;
 			transform.GetChild(0).GetComponent<MeshRenderer>().enabled = false;
