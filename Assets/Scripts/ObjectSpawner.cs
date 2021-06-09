@@ -22,8 +22,8 @@ public class ObjectSpawner : NetworkBehaviour
 	void SpawnSingleItem(int id, Vector3 position)
 	{
 		GameObject newPickableObject = Instantiate(pickableObjectPrefab, position, Quaternion.identity);
-		newPickableObject.GetComponent<PickableObject>().ChangeItemServerRpc(id);
 		newPickableObject.GetComponent<NetworkObject>().Spawn();
+		newPickableObject.GetComponent<PickableObject>().ChangeItemServerRpc(id);
 	}
 
 	void SpawnItemBatch()

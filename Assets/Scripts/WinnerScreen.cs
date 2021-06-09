@@ -50,7 +50,6 @@ public class WinnerScreen : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		Debug.Log(string.Format("Total players: {0} Dead players: {1}", totalPlayers, deadPlayers));
         if (deadPlayers != -999)
 		{
 			if (totalPlayers == deadPlayers + 1)
