@@ -3801,7 +3801,7 @@ MonoBehaviour:
   pickableObjectPrefab: {fileID: 585233889992733658, guid: 2b36da41de7bef941bf30324e6f25983, type: 3}
   amountOfItems: 6
   timeSinceLastSpawn: 0
-  spawnRate: 15
+  spawnRate: 5
 --- !u!4 &1898662358
 Transform:
   m_ObjectHideFlags: 0

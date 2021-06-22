@@ -360,7 +360,7 @@ TextMesh:
   m_Font: {fileID: 12800000, guid: be0cb53c77637044d90292944d0a1453, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 4281721063
+    rgba: 4278789414
 --- !u!114 &399049043352562202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -559,6 +559,7 @@ MonoBehaviour:
   AttackObject: {fileID: 3928638637860585075, guid: 8ce0d0928e5f6b5429950ca66bf4efec, type: 3}
   amountOfObstacleCollisions: 0
   isDead: 0
+  contactedWinnerScreen: 0
   variableSpeed:
     m_InternalValue: 0
   variableAttackDelay:

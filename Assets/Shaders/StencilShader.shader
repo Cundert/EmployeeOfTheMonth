@@ -76,7 +76,7 @@ Shader "Unlit/StencilShader"
                 
                 if(mask.r == 0 && z < 9.9) discard;
                 
-                return col * (mask.r * prop + 1 - prop) * float4(1,1,1,0) + float4(0,0,0,1);
+                return col * (mask.r * prop + 1 - prop) * float4(1,1,1,0) + float4(0,0,0,col.a);
             }
             ENDCG
         }
